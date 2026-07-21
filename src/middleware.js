@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-// Rafraîchit la session Supabase à chaque requête (nécessaire avec l'App Router).
+// Pages nécessitant une session Supabase (les autres n'appellent pas Supabase → navigation instantanée)
+const PROTECTED = ["/compte", "/admin"];
+
 export async function middleware(request) {
   // --- Mur d'authentification (site en développement) ---
   // Actif uniquement si SITE_PASSWORD est défini. Pour ouvrir le site au public,
@@ -13,21 +15,24 @@ export async function middleware(request) {
     if (request.headers.get("authorization") !== expected) {
       return new NextResponse("Acces restreint", {
         status: 401,
-        headers: {
-          "WWW-Authenticate": 'Basic realm="Flo Barber"',
-        },
+        headers: { "WWW-Authenticate": 'Basic realm="Flo Barber"' },
       });
     }
   }
 
-  // Tant que Supabase n'est pas configuré, on ne fait rien (le site vitrine fonctionne).
+  const { pathname } = request.nextUrl;
+  const needsAuth = PROTECTED.some((p) => pathname.startsWith(p));
+
+  // Pages publiques ou Supabase non configuré → on ne fait aucun appel réseau.
   if (
+    !needsAuth ||
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
-    return NextResponse.next();
+    return NextResponse.next({ request });
   }
 
+  // Rafraîchit la session Supabase uniquement sur les pages authentifiées.
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -56,7 +61,6 @@ export async function middleware(request) {
 }
 
 export const config = {
-  // On applique le middleware partout sauf sur les fichiers statiques.
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|webmanifest|xml|txt)$).*)",
   ],
