@@ -1,0 +1,45 @@
+// =============================================================
+//  Variables & thème Flo Barber
+// =============================================================
+
+// Variables SCSS (utilisables dans les calculs / mixins)
+$black: #0a0a0a;
+$black-soft: #141414;
+$black-card: #1a1a1a;
+$gold: #d4af37;
+$gold-light: #f4e4a6;
+$gold-dark: #a67c00;
+$gold-gradient: linear-gradient(135deg, #a67c00 0%, #d4af37 45%, #f4e4a6 100%);
+$text: #f5f5f5;
+$text-muted: #9a9a9a;
+$border: rgba(212, 175, 55, 0.18);
+$nav-height: 96px;
+
+// Breakpoints
+$bp-mobile: 480px;
+$bp-tablet: 780px;
+$bp-nav: 860px;
+
+// Mixin réutilisable pour le texte / dégradé doré
+@mixin gold-fill {
+  background: $gold-gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: $gold;
+}
+
+// Expose les valeurs en custom properties CSS (utiles au runtime / theming)
+:root {
+  --black: #{$black};
+  --black-soft: #{$black-soft};
+  --black-card: #{$black-card};
+  --gold: #{$gold};
+  --gold-light: #{$gold-light};
+  --gold-dark: #{$gold-dark};
+  --gold-gradient: #{$gold-gradient};
+  --text: #{$text};
+  --text-muted: #{$text-muted};
+  --border: #{$border};
+  --nav-height: #{$nav-height};
+}

@@ -1,0 +1,15 @@
+// =============================================================
+//  Feuille de style globale Flo Barber
+//  Assemble tous les partials SCSS.
+// =============================================================
+@use "variables";
+@use "base";
+@use "leaflet";
+@use "logo";
+@use "navbar";
+@use "footer";
+@use "home";
+@use "recherche";
+@use "catalogue";
+@use "account";
+@use "admin";

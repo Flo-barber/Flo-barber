@@ -1,0 +1,28 @@
+{
+  "name": "flo-barber",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:lan": "next dev -H 192.168.1.44",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.5.2",
+    "@supabase/supabase-js": "2.45.4",
+    "google-auth-library": "9.14.1",
+    "html5-qrcode": "2.3.8",
+    "jsonwebtoken": "9.0.2",
+    "leaflet": "1.9.4",
+    "next": "14.2.5",
+    "qrcode.react": "4.1.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-leaflet": "4.2.1"
+  },
+  "devDependencies": {
+    "sass": "1.77.8"
+  }
+}

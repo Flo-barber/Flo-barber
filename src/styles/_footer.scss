@@ -1,0 +1,98 @@
+// =============================================================
+//  Footer
+// =============================================================
+@use "variables" as *;
+
+.footer {
+  background: $black-soft;
+  border-top: 1px solid $border;
+  padding: 56px 0 32px;
+  margin-top: 40px;
+
+  &-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    p {
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+  }
+
+  &-tag {
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: $text-muted;
+    text-transform: uppercase;
+  }
+
+  &-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    a {
+      color: $text-muted;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $gold-light;
+      }
+    }
+  }
+
+  &-social {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    &-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: $gold-light;
+    }
+
+    &-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      color: $gold-light;
+      border: 1px solid $border;
+      transition: color 0.2s ease, border-color 0.2s ease,
+        background 0.2s ease, transform 0.2s ease;
+
+      &:hover {
+        color: $black;
+        background: $gold-gradient;
+        border-color: transparent;
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  &-legal p {
+    color: $text-muted;
+    font-size: 0.82rem;
+  }
+}

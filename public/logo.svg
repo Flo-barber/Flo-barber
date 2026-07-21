@@ -1,0 +1,14 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fbGold" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a67c00"/>
+      <stop offset="0.45" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#f4e4a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="14" fill="#0a0a0a"/>
+  <rect x="4" y="4" width="112" height="112" rx="11" fill="none" stroke="url(#fbGold)" stroke-width="1.5" opacity="0.5"/>
+  <text x="60" y="60" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700"
+        font-size="58" letter-spacing="-2" fill="url(#fbGold)">FB</text>
+</svg>

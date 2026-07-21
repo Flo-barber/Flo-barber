@@ -1,0 +1,197 @@
+// =============================================================
+//  Navbar — pilule flottante moderne (inspiré BlackBox)
+// =============================================================
+@use "variables" as *;
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  padding: 18px 16px;
+  pointer-events: none; // seule la pilule est cliquable
+
+  &-pill {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    max-width: 940px;
+    height: 60px;
+    padding: 0 10px 0 26px;
+    border: 1px solid $border;
+    border-radius: 999px;
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+    // Le flou est porté par un pseudo-élément pour que le pill ne soit PAS
+    // un ancêtre filtré (sinon il casse le backdrop-filter du menu déroulant).
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(18, 18, 18, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: -1;
+      pointer-events: none;
+    }
+  }
+
+  &-brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &-brand-mark {
+    height: 26px;
+    width: auto;
+    display: block;
+  }
+
+  &-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin: 0 auto;
+  }
+
+  &-link {
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $text-muted;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+
+    &:hover,
+    &.active {
+      color: $gold-light;
+    }
+  }
+
+  &-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 26px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $black;
+    background: $gold-gradient;
+    transition: filter 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+  }
+
+  &-burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      margin: 0 auto;
+      background: $gold;
+      transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+
+    &.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    &.open span:nth-child(2) {
+      opacity: 0;
+    }
+    &.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+  }
+}
+
+@media (max-width: $bp-nav) {
+  .nav-pill {
+    padding-left: 20px;
+  }
+
+  .nav-burger {
+    display: flex;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    margin: 0;
+    padding: 14px;
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid $border;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+
+    &.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
+
+  .nav-link {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+
+    &:hover,
+    &.active {
+      background: rgba(212, 175, 55, 0.08);
+    }
+  }
+}
+
+@media (max-width: $bp-mobile) {
+  .nav-brand-mark {
+    height: 22px;
+  }
+}
