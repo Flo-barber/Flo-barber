@@ -11,10 +11,10 @@ export async function middleware(request) {
       "Basic " +
       btoa(`${process.env.SITE_USER || "flo"}:${process.env.SITE_PASSWORD}`);
     if (request.headers.get("authorization") !== expected) {
-      return new NextResponse("Accès restreint", {
+      return new NextResponse("Acces restreint", {
         status: 401,
         headers: {
-          "WWW-Authenticate": 'Basic realm="Flo Barber — Accès restreint"',
+          "WWW-Authenticate": 'Basic realm="Flo Barber"',
         },
       });
     }
