@@ -3,17 +3,51 @@
 // =============================================================
 @use "variables" as *;
 
+// Expose les tokens du thème en custom properties CSS (runtime / theming).
+// Émis une seule fois ici, globalement (voir note dans _variables.scss).
+:root {
+  --black: #{$black};
+  --black-soft: #{$black-soft};
+  --black-card: #{$black-card};
+  --concrete: #{$concrete};
+  --metal: #{$metal};
+  --metal-light: #{$metal-light};
+  --metal-dark: #{$metal-dark};
+  --metal-gradient: #{$metal-gradient};
+  // Alias historiques (repointés sur le métal)
+  --gold: #{$gold};
+  --gold-light: #{$gold-light};
+  --gold-dark: #{$gold-dark};
+  --gold-gradient: #{$gold-gradient};
+  --text: #{$text};
+  --text-muted: #{$text-muted};
+  --border: #{$border};
+  --nav-height: #{$nav-height};
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,
-body {
+html {
   background: $black;
+}
+
+// Fond béton plat industriel (DA « béton / métal ») : mur béton uniforme,
+// lumière douce diffuse en haut + léger vignettage bas, comme le visuel de marque.
+body {
+  background-color: #16161a;
+  background-image:
+    radial-gradient(130% 90% at 50% -12%, rgba(198, 200, 208, 0.11), transparent 58%),
+    radial-gradient(130% 110% at 50% 118%, rgba(0, 0, 0, 0.5), transparent 60%),
+    url("/textures/concrete.jpg");
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: cover, cover, 420px 420px;
+  background-attachment: fixed, fixed, fixed;
   color: $text;
-  font-family: "Helvetica Neue", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: $font-body;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -23,12 +57,21 @@ a {
   text-decoration: none;
 }
 
+// Grands titres en gothique moderne (marque + titres de section), graisse légère.
 h1,
-h2,
+h2 {
+  font-family: $font-gothic;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
 h3 {
-  font-weight: 700;
+  font-family: $font-condensed;
+  font-weight: 600;
   letter-spacing: 0.5px;
   line-height: 1.15;
+  text-transform: uppercase;
 }
 
 .container {
@@ -38,8 +81,9 @@ h3 {
   padding: 0 24px;
 }
 
-.gold-text {
-  @include gold-fill;
+.gold-text,
+.metal-text {
+  @include metal-fill;
 }
 
 // --- Boutons ---
@@ -48,11 +92,12 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 32px;
+  padding: 14px 34px;
   border-radius: 2px;
+  font-family: $font-condensed;
   font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
+  font-size: 1rem;
+  letter-spacing: 2px;
   text-transform: uppercase;
   cursor: pointer;
   border: 1px solid $gold;
@@ -74,7 +119,7 @@ h3 {
     color: $gold-light;
 
     &:hover {
-      background: rgba(212, 175, 55, 0.1);
+      background: rgba(200, 202, 210, 0.1);
     }
   }
 }

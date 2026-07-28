@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import "./LogoutButton.scss";
 
-export default function LogoutButton({ className = "auth-logout" }) {
+export default function LogoutButton({ className = "logout-button" }) {
   const router = useRouter();
 
   async function logout() {

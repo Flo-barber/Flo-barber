@@ -1,6 +1,8 @@
 // =============================================================
-//  Logo FB (monogramme SVG)
+//  Atom : Logo FB (monogramme SVG)
 // =============================================================
+// Ce composant n'utilise pas de token du thème (le dégradé est défini
+// inline dans le SVG). Si besoin : `@use "variables" as *;`.
 
 .fb-logo {
   height: 44px;

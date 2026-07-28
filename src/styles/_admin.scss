@@ -118,6 +118,9 @@
   text-align: center;
 }
 
+// `.qr-reader` reste ici (global) volontairement : le composant molecule
+// QrScanner est chargé en `dynamic()` et son fallback `loading` utilise cette
+// classe avant que le composant (et un éventuel CSS co-localisé) ne soit chargé.
 .qr-reader {
   width: 100%;
   border-radius: 16px;

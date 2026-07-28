@@ -105,22 +105,8 @@
     }
   }
 
-  &-logout {
-    background: none;
-    border: 1px solid $border;
-    color: $text-muted;
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-
-    &:hover {
-      color: $gold-light;
-      border-color: $gold;
-    }
-  }
+  // NB : le bouton de déconnexion est désormais l'atom
+  // `@/components/atoms/LogoutButton` (classe `.logout-button`).
 }
 
 // --- Espace client ---
@@ -215,7 +201,7 @@
 
 .points-box {
   background:
-    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15), transparent 70%),
+    radial-gradient(circle at 50% 0%, rgba(200, 202, 210, 0.15), transparent 70%),
     $black-card;
   border: 1px solid $border;
   border-radius: 16px;
@@ -245,91 +231,10 @@
 }
 
 // --- Carte de fidélité (QR) ---
-.loyalty {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  &-card {
-    background: linear-gradient(160deg, #1a1a1a 0%, #0b0b0b 100%);
-    border: 1px solid $border;
-    border-radius: 18px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-  }
-
-  &-card-head {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &-card-logo {
-    height: 22px;
-    width: auto;
-  }
-
-  &-card-tag {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: $text-muted;
-  }
-
-  &-card-qr {
-    background: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    line-height: 0;
-  }
-
-  &-card-foot {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.95rem;
-  }
-
-  &-hint {
-    font-size: 0.82rem;
-    color: $text-muted;
-    text-align: center;
-  }
-}
-
-// Bouton « Ajouter à Google Wallet »
-.wallet-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 13px 20px;
-  border-radius: 999px;
-  background: #202124;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    background: #2d2e31;
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
-}
+// Les styles `.loyalty*` sont désormais la molecule
+// `@/components/molecules/LoyaltyCard`.
+// Le bouton « Ajouter à Google Wallet » (.wallet-btn) est la molecule
+// `@/components/molecules/AddToGoogleWallet`.
 
 @media (max-width: 860px) {
   .account-grid {

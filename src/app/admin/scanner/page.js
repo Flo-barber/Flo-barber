@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { creditPoints } from "../actions";
 
-const QrScanner = dynamic(() => import("@/components/QrScanner"), {
+const QrScanner = dynamic(() => import("@/components/molecules/QrScanner"), {
   ssr: false,
   loading: () => <div className="qr-reader qr-reader--loading">Activation de la caméra…</div>,
 });

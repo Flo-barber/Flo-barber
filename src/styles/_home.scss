@@ -9,16 +9,29 @@
   display: flex;
   align-items: center;
   background:
-    radial-gradient(circle at 70% 30%, rgba(212, 175, 55, 0.12), transparent 55%),
-    linear-gradient(180deg, #0a0a0a 0%, #141414 100%);
+    radial-gradient(circle at 72% 28%, rgba(200, 202, 210, 0.1), transparent 55%),
+    linear-gradient(180deg, rgba(13, 13, 15, 0) 0%, rgba(13, 13, 15, 0.65) 100%);
   overflow: hidden;
+
+  // Halo métallique diffus derrière le titre
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% 42%,
+      rgba(200, 202, 210, 0.06),
+      transparent 60%
+    );
+    pointer-events: none;
+  }
 
   &-overlay {
     position: absolute;
     inset: 0;
     background-image: repeating-linear-gradient(
       45deg,
-      rgba(212, 175, 55, 0.03) 0 2px,
+      rgba(200, 202, 210, 0.025) 0 2px,
       transparent 2px 22px
     );
     pointer-events: none;
@@ -32,16 +45,23 @@
   }
 
   &-eyebrow {
+    font-family: $font-condensed;
     text-transform: uppercase;
-    letter-spacing: 4px;
-    font-size: 0.85rem;
-    color: $gold;
-    margin-bottom: 20px;
+    letter-spacing: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $metal-light;
+    margin-bottom: 22px;
   }
 
   &-title {
-    font-size: clamp(2.6rem, 8vw, 5rem);
-    margin-bottom: 24px;
+    font-size: clamp(3rem, 9vw, 5.6rem);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 1.05;
+    margin-bottom: 26px;
+    // Léger relief ton sur ton (subtil, pour ne pas alourdir)
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   }
 
   &-sub {

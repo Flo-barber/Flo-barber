@@ -1,7 +1,24 @@
 import "@/styles/globals.scss";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { Grenze_Gotisch, Oswald } from "next/font/google";
+import Navbar from "@/components/organisms/Navbar";
+import Footer from "@/components/organisms/Footer";
 import ServiceWorker from "@/components/ServiceWorker";
+
+// DA « béton / métal » : gothique moderne LISIBLE (Grenze Gotisch) en graisse légère
+// pour la marque et les grands titres ; condensée (Oswald) pour sur-titres / boutons.
+const gothic = Grenze_Gotisch({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-gothic",
+});
+
+const condensed = Oswald({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-condensed",
+});
 
 export const metadata = {
   metadataBase: new URL("https://flo-barber.vercel.app"),
@@ -61,14 +78,14 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#0d0d0f",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${gothic.variable} ${condensed.variable}`}>
       <body>
         <Navbar />
         <main>{children}</main>

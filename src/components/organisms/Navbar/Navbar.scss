@@ -1,5 +1,5 @@
 // =============================================================
-//  Navbar — pilule flottante moderne (inspiré BlackBox)
+//  Organism : Navbar — pilule flottante moderne (inspiré BlackBox)
 // =============================================================
 @use "variables" as *;
 
@@ -64,8 +64,10 @@
   }
 
   &-link {
-    font-size: 0.82rem;
-    letter-spacing: 1px;
+    font-family: $font-condensed;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: $text-muted;
     transition: color 0.2s ease;
@@ -91,9 +93,10 @@
     height: 44px;
     padding: 0 26px;
     border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-family: $font-condensed;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: $black;
     background: $gold-gradient;
@@ -185,7 +188,7 @@
 
     &:hover,
     &.active {
-      background: rgba(212, 175, 55, 0.08);
+      background: rgba(200, 202, 210, 0.08);
     }
   }
 }

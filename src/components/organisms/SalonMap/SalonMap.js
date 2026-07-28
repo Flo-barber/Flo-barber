@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "./SalonMap.scss"; // après leaflet.css : nos overrides priment par cascade
 
 // Marqueur doré "FB" personnalisé (évite le bug des icônes par défaut de Leaflet)
 function fbIcon(active) {

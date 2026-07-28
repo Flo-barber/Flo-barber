@@ -1,0 +1,64 @@
+// =============================================================
+//  Molecule : carte de fidélité (QR)
+// =============================================================
+// Utilitaires globaux réutilisés (base) : `.btn`/`.btn-primary`, `.gold-text`.
+// Le bouton Google Wallet est la molecule AddToGoogleWallet.
+@use "variables" as *;
+
+.loyalty {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &-card {
+    background: linear-gradient(160deg, #1a1a1a 0%, #0b0b0b 100%);
+    border: 1px solid $border;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  &-card-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-card-logo {
+    height: 22px;
+    width: auto;
+  }
+
+  &-card-tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: $text-muted;
+  }
+
+  &-card-qr {
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    line-height: 0;
+  }
+
+  &-card-foot {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  &-hint {
+    font-size: 0.82rem;
+    color: $text-muted;
+    text-align: center;
+  }
+}

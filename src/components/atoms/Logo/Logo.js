@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import "./Logo.scss";
 
 export default function Logo() {
   const gradId = useId();
@@ -15,13 +16,13 @@ export default function Logo() {
     >
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#6b4d16" />
-          <stop offset="0.18" stopColor="#a9822c" />
-          <stop offset="0.44" stopColor="#f6e39a" />
-          <stop offset="0.52" stopColor="#fffdf3" />
-          <stop offset="0.62" stopColor="#e9c65c" />
-          <stop offset="0.84" stopColor="#9c7623" />
-          <stop offset="1" stopColor="#5f430f" />
+          <stop offset="0" stopColor="#45464a" />
+          <stop offset="0.18" stopColor="#7d7e83" />
+          <stop offset="0.44" stopColor="#d8d9dd" />
+          <stop offset="0.52" stopColor="#f2f3f5" />
+          <stop offset="0.62" stopColor="#cdced3" />
+          <stop offset="0.84" stopColor="#85868b" />
+          <stop offset="1" stopColor="#3f4044" />
         </linearGradient>
       </defs>
       <g transform="translate(-10.62,257.80) scale(1.1710,1.1710)">

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import LoyaltyCard from "@/components/LoyaltyCard";
-import LogoutButton from "@/components/LogoutButton";
+import LoyaltyCard from "@/components/molecules/LoyaltyCard";
+import LogoutButton from "@/components/atoms/LogoutButton";
 import { isConfigured as walletConfigured } from "@/lib/googleWallet";
 
 export const metadata = {

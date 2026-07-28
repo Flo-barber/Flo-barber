@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import salons from "@/data/salons";
 
 // La carte Leaflet doit être chargée uniquement côté client (pas de SSR)
-const SalonMap = dynamic(() => import("@/components/SalonMap"), {
+const SalonMap = dynamic(() => import("@/components/organisms/SalonMap"), {
   ssr: false,
   loading: () => <div className="map-loading">Chargement de la carte…</div>,
 });

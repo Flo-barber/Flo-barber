@@ -1,45 +1,60 @@
 // =============================================================
 //  Variables & thème Flo Barber
+//  DA « béton / métal » : monochrome sombre, accent métal (plus de doré).
 // =============================================================
 
-// Variables SCSS (utilisables dans les calculs / mixins)
-$black: #0a0a0a;
-$black-soft: #141414;
-$black-card: #1a1a1a;
-$gold: #d4af37;
-$gold-light: #f4e4a6;
-$gold-dark: #a67c00;
-$gold-gradient: linear-gradient(135deg, #a67c00 0%, #d4af37 45%, #f4e4a6 100%);
-$text: #f5f5f5;
-$text-muted: #9a9a9a;
-$border: rgba(212, 175, 55, 0.18);
+// --- Fonds (anthracite / béton) ---
+$black: #0d0d0f; // fond principal, quasi noir
+$black-soft: #141416; // sections alternées
+$black-card: #1b1b1e; // cartes / surfaces
+$concrete: #26262b; // gris béton (surfaces relevées, séparateurs)
+
+// --- Accent métal (remplace le doré) ---
+$metal: #c7c8cc; // accent principal (boutons, liens, actifs)
+$metal-light: #ececf0; // survols / textes accentués clairs
+$metal-dark: #6e7076; // métal sombre (dégradés, bords)
+$metal-gradient: linear-gradient(135deg, #6e7076 0%, #c7c8cc 46%, #ececf0 100%);
+
+// --- Texte ---
+$text: #ececee;
+$text-muted: #8b8c92;
+$border: rgba(200, 202, 210, 0.14);
 $nav-height: 96px;
+
+// --- Alias de compatibilité (ancienne DA dorée) -------------------------------
+// L'app référence encore massivement `$gold*` / `gold-fill`. On les repointe vers
+// le métal pour recolorer tout le site sans réécrire chaque composant. Le nouveau
+// code doit utiliser `$metal*` / `metal-fill`.
+$gold: $metal;
+$gold-light: $metal-light;
+$gold-dark: $metal-dark;
+$gold-gradient: $metal-gradient;
 
 // Breakpoints
 $bp-mobile: 480px;
 $bp-tablet: 780px;
 $bp-nav: 860px;
 
-// Mixin réutilisable pour le texte / dégradé doré
-@mixin gold-fill {
-  background: $gold-gradient;
+// --- Polices (variables CSS injectées par next/font dans layout.js) ---
+$font-gothic: var(--font-gothic), "Grenze Gotisch", "UnifrakturCook", serif;
+$font-condensed: var(--font-condensed), "Oswald", "Arial Narrow", sans-serif;
+$font-body: "Helvetica Neue", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+// Mixin réutilisable : remplissage dégradé métal (texte)
+@mixin metal-fill {
+  background: $metal-gradient;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: $gold;
+  color: $metal-light;
 }
 
-// Expose les valeurs en custom properties CSS (utiles au runtime / theming)
-:root {
-  --black: #{$black};
-  --black-soft: #{$black-soft};
-  --black-card: #{$black-card};
-  --gold: #{$gold};
-  --gold-light: #{$gold-light};
-  --gold-dark: #{$gold-dark};
-  --gold-gradient: #{$gold-gradient};
-  --text: #{$text};
-  --text-muted: #{$text-muted};
-  --border: #{$border};
-  --nav-height: #{$nav-height};
+// Alias historique (même effet, désormais métallique)
+@mixin gold-fill {
+  @include metal-fill;
 }
+
+// NOTE : ce fichier ne doit produire AUCUNE sortie CSS (uniquement des tokens
+// et des mixins). Ainsi chaque composant peut faire `@use "variables" as *;`
+// sans dupliquer de règles. Les custom properties `:root` sont exposées une
+// seule fois, globalement, dans `_base.scss`.

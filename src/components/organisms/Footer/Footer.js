@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Logo from "./Logo";
+import Logo from "@/components/atoms/Logo";
+import "./Footer.scss";
 
 export default function Footer() {
   return (

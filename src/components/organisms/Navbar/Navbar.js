@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import "./Navbar.scss";
 
 const links = [
   { href: "/", label: "Accueil" },

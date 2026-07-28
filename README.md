@@ -1,42 +1,87 @@
 # Flo Barber — Webapp
 
-Application web de localisation des salons de coiffure **Flo Barber**, avec carte interactive, recherche par ville/code postal et réservation via Planity.
+Application web **Next.js 14** pour la chaîne de barbershops **Flo Barber** : vitrine,
+localisateur de salons sur carte interactive, et **programme de fidélité** complet (comptes
+clients, carte QR, Google Wallet) avec un **espace admin** pour créditer les points.
 
-Construite avec **Next.js 14 (App Router)** pour bénéficier du SSR et d'un bon référencement (SEO). La carte utilise **Leaflet + OpenStreetMap** (gratuit, sans clé API).
+Direction artistique **« béton / métal »** : monochrome sombre, fond béton texturé,
+typographie gothique (blackletter) pour la marque et les grands titres, accent métal.
+Réservation de rendez-vous déléguée à **Planity** (un lien par salon).
+
+> Pour la mise en route détaillée de la fidélité (Supabase + Google Wallet), voir
+> **[`GUIDE-FIDELITE.md`](./GUIDE-FIDELITE.md)**. Pour les règles et conventions internes du
+> code, voir **[`CLAUDE.md`](./CLAUDE.md)**.
 
 ## Stack
 
-- Next.js 14 (App Router, React 18)
-- Leaflet / react-leaflet (fonds de carte CARTO dark + OpenStreetMap)
-- Géocodage de la recherche via l'API publique Nominatim (gratuit)
-- Aucune clé API requise → déploiement Vercel en 1 clic
+- **Next.js 14** (App Router, React 18) — Server Components par défaut, SSR pour le SEO.
+- **Supabase** (`@supabase/ssr`) — authentification + base de données de la fidélité.
+- **Google Wallet** (`google-auth-library` + `jsonwebtoken`) — carte de fidélité mobile.
+- **Leaflet / react-leaflet** — carte interactive (fonds CARTO dark + OpenStreetMap),
+  géocodage via l'API publique **Nominatim** (gratuit, sans clé API).
+- **QR** — `qrcode.react` (génération de la carte), `html5-qrcode` (scan caméra admin).
+- **SCSS** (`sass`) — thème centralisé, architecture atomic design (voir plus bas).
+- **PWA** — manifest, service worker, icônes.
+
+## Fonctionnalités
+
+### Vitrine publique
+
+- `/` — accueil (hero, prestations, aperçu des salons).
+- `/recherche` — carte interactive + recherche par ville / code postal + tri par proximité,
+  avec réservation via Planity.
+- `/catalogue` — placeholder produits (à construire).
+
+### Espace client — `/compte` (protégé)
+
+- Connexion / inscription via Supabase (`/compte/connexion`).
+- Carte de fidélité : **QR code contenant uniquement l'identifiant du client**, solde de
+  points, historique, et bouton **« Ajouter à Google Wallet »** (mise à jour automatique
+  des points).
+
+### Espace admin / salon — `/admin` (protégé)
+
+- Liste des clients.
+- `/admin/scanner` — scan de la carte QR d'un client via la caméra, saisie du montant, et
+  crédit des points (**1 € = 1 point**).
 
 ## Démarrer en local
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:3000
 ```
-
-Le site est accessible sur http://localhost:3000
 
 Autres commandes :
 
 ```bash
-npm run build   # build de production
-npm start       # lancer le build
+npm run dev:lan    # test sur mobile en réseau local
+npm run build      # build de production
+npm start          # lancer le build
+npm run lint
 ```
 
-## Pages
+### Configuration (variables d'environnement)
 
-- `/` — Accueil (hero, prestations, aperçu des salons)
-- `/recherche` — Carte interactive + barre de recherche par ville/CP
-- `/catalogue` — Placeholder (produits à venir)
+Copier `.env.local.example` en **`.env.local`** et renseigner les clés. La vitrine et la
+carte fonctionnent sans configuration ; la **fidélité** nécessite Supabase, et le **wallet**
+nécessite Google Wallet.
+
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — projet Supabase.
+- `GOOGLE_WALLET_ISSUER_ID`, `GOOGLE_WALLET_SERVICE_ACCOUNT` (base64) — Google Wallet.
+- `SITE_USER`, `SITE_PASSWORD` — **mur d'authentification Basic optionnel** couvrant tout le
+  site tant qu'il est en développement (laisser vide pour ouvrir au public).
+
+Le schéma de base (tables, sécurité RLS, triggers) est dans **`supabase/schema.sql`** ; la
+procédure pas à pas est dans `GUIDE-FIDELITE.md`.
+
+> ⚠️ Ne jamais commiter `.env.local` ni la clé de service Google (`flo-barber-wallet-*.json`).
+> Ces fichiers sont gitignorés.
 
 ## Ajouter / modifier des salons
 
-Toutes les données sont dans **`src/data/salons.js`**. Il suffit d'éditer ce
-fichier — chaque salon suit ce format :
+Toutes les données sont centralisées dans **`src/data/salons.js`**. Il suffit d'éditer ce
+tableau — chaque salon suit ce format :
 
 ```js
 {
@@ -54,29 +99,57 @@ fichier — chaque salon suit ce format :
 }
 ```
 
-**Trouver les coordonnées GPS** d'une adresse : https://www.latlong.net
-ou clic droit sur une adresse dans Google Maps → les coordonnées s'affichent.
+Coordonnées GPS : https://www.latlong.net ou clic droit sur une adresse dans Google Maps.
 
-Le lien **Planity** (`planityUrl`) est celui que vous renseignez à la main pour
-chaque salon ; il alimente les boutons « Réserver ».
+## Architecture
 
-## Déploiement sur Vercel
-
-1. Poussez ce dossier sur un dépôt GitHub / GitLab.
-2. Sur https://vercel.com → **New Project** → importez le dépôt.
-3. Vercel détecte Next.js automatiquement — aucune variable d'environnement
-   n'est nécessaire.
-4. Cliquez sur **Deploy**. C'est tout.
-
-Alternative sans Git, en ligne de commande :
-
-```bash
-npm i -g vercel
-vercel
 ```
+src/
+├── app/                    # App Router (pages, layouts, server actions, SEO)
+│   ├── page.js             # accueil
+│   ├── recherche/          # carte + recherche
+│   ├── catalogue/          # placeholder
+│   ├── compte/             # espace client (+ connexion, actions)
+│   ├── admin/              # espace salon (+ scanner, actions)
+│   ├── manifest.js · sitemap.js · robots.js
+│   └── layout.js
+├── components/             # atomic design
+│   ├── atoms/              # Logo, LogoutButton
+│   ├── molecules/          # AddToGoogleWallet, LoyaltyCard, QrScanner
+│   └── organisms/          # Navbar, Footer, SalonMap
+├── data/salons.js          # source unique des salons
+├── lib/
+│   ├── supabase/           # clients server.js et client.js (à ne pas mélanger)
+│   └── googleWallet.js     # génération / mise à jour de la carte (serveur uniquement)
+├── styles/                 # thème + partials de page (globaux)
+└── middleware.js           # protection /compte et /admin + mur d'auth Basic
+```
+
+### Conventions
+
+- **Server Components par défaut** ; `"use client"` uniquement si nécessaire (carte, scanner,
+  formulaires, QR). Les mutations passent par des **Server Actions** (`actions.js`).
+- **Sécurité côté base** : la fidélité repose sur la sécurité de Supabase (RLS, triggers),
+  pas sur l'UI. Seul un admin peut créditer des points ; le QR ne contient que l'identifiant
+  client. Voir `supabase/schema.sql`.
+- **Atomic design + un SCSS par composant** : chaque composant vit dans son dossier
+  (`Composant.js` + `Composant.scss` + `index.js`) et importe son SCSS co-localisé. Le thème
+  (noir & doré) est centralisé dans `src/styles/_variables.scss` et réutilisé via
+  `@use "variables" as *;` (résolu par `sassOptions.includePaths`). Les styles de page
+  restent des partials globaux assemblés dans `src/styles/globals.scss`.
+
+## Déploiement (Vercel)
+
+1. Pousser le dépôt sur GitHub / GitLab.
+2. Sur https://vercel.com → **New Project** → importer le dépôt (Next.js détecté
+   automatiquement).
+3. **Settings → Environment Variables** : ajouter les variables Supabase (et Google Wallet
+   si utilisé). La caméra du scanner nécessite HTTPS, fourni par Vercel.
+4. **Deploy**.
 
 ## Personnalisation
 
-- **Couleurs / thème doré** : variables CSS dans `src/app/globals.css` (`:root`).
-- **Logo FB** : `public/logo.svg` et le composant `src/components/Logo.js`.
-- **Design** inspiré de blackboxparis.com (noir & doré, épuré).
+- **Thème / couleurs** : tokens dans `src/styles/_variables.scss` (béton + accent métal ;
+  ne jamais coder les couleurs en dur). Fond texturé : `public/textures/concrete.jpg`.
+- **Polices** : `next/font` dans `src/app/layout.js` (Grenze Gotisch + Oswald).
+- **Logo** : atom `src/components/atoms/Logo/` (monogramme SVG) et `public/wordmark.svg`.

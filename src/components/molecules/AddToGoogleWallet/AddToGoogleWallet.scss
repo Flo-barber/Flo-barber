@@ -1,0 +1,33 @@
+// =============================================================
+//  Molecule : bouton « Ajouter à Google Wallet »
+// =============================================================
+// Couleurs volontairement en dur : ce sont les couleurs de marque
+// Google Wallet (#202124), pas le thème Flo Barber.
+// Le message d'erreur réutilise la classe utilitaire partagée `.auth-error`.
+
+.wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 999px;
+  background: #202124;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: #2d2e31;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}

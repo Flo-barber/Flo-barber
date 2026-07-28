@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getWalletSaveUrl } from "@/app/compte/actions";
+import "./AddToGoogleWallet.scss";
 
 export default function AddToGoogleWallet() {
   const [busy, setBusy] = useState(false);

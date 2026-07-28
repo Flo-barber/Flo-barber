@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import LogoutButton from "@/components/LogoutButton";
+import LogoutButton from "@/components/atoms/LogoutButton";
 
 export default async function AdminPage() {
   const supabase = createClient();

@@ -2,7 +2,8 @@
 
 import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import AddToGoogleWallet from "./AddToGoogleWallet";
+import AddToGoogleWallet from "@/components/molecules/AddToGoogleWallet";
+import "./LoyaltyCard.scss";
 
 // Carte de fidélité : QR encodant l'identifiant du client, téléchargeable en PNG.
 export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
