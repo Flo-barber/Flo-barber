@@ -22,6 +22,16 @@ Réservation de rendez-vous déléguée à **Planity** (un lien par salon).
 - **QR** — `qrcode.react` (génération de la carte), `html5-qrcode` (scan caméra admin).
 - **SCSS** (`sass`) — thème centralisé, architecture atomic design (voir plus bas).
 - **PWA** — manifest, service worker, icônes.
+- **i18n FR/EN** — routing par URL (`/fr`, `/en`), dictionnaires JSON clé/valeur, sans
+  dépendance externe.
+
+## Langues (i18n)
+
+Le site est bilingue **français / anglais** avec routing par URL : `/fr/...` et `/en/...`
+(français par défaut ; `/` redirige vers `/fr`). Les textes sont dans
+`src/locales/fr.json` et `src/locales/en.json` (clé/valeur imbriqué). Pour ajouter une
+chaîne : ajouter la clé dans les deux fichiers, puis l'utiliser via `getT(locale)` (serveur)
+ou `useT()` (client). Les liens internes passent par `@/i18n/Link` pour conserver la langue.
 
 ## Fonctionnalités
 

@@ -3,28 +3,34 @@ import { createClient } from "@/lib/supabase/server";
 import LoyaltyCard from "@/components/molecules/LoyaltyCard";
 import LogoutButton from "@/components/atoms/LogoutButton";
 import { isConfigured as walletConfigured } from "@/lib/googleWallet";
+import { getT } from "@/i18n/dictionaries";
 
-export const metadata = {
-  title: "Mon compte fidélité",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  return {
+    title: getT(locale)("meta.accountTitle"),
+    robots: { index: false, follow: false },
+  };
+}
 
-function formatDate(d) {
-  return new Date(d).toLocaleDateString("fr-FR", {
+function formatDate(d, locale) {
+  return new Date(d).toLocaleDateString(locale === "en" ? "en-GB" : "fr-FR", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
 }
 
-export default async function ComptePage() {
+export default async function ComptePage({ params }) {
+  const { locale } = await params;
+  const t = getT(locale);
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/compte/connexion?redirect=/compte");
+    redirect(`/${locale}/compte/connexion?redirect=/${locale}/compte`);
   }
 
   const { data: profile } = await supabase
@@ -47,8 +53,10 @@ export default async function ComptePage() {
       <div className="container">
         <div className="account-head">
           <div>
-            <p className="account-eyebrow gold-text">Programme de fidélité</p>
-            <h1>Bonjour {profile?.full_name || ""}</h1>
+            <p className="account-eyebrow gold-text">{t("account.eyebrow")}</p>
+            <h1>
+              {t("account.hello")} {profile?.full_name || ""}
+            </h1>
           </div>
           <LogoutButton />
         </div>
@@ -56,46 +64,43 @@ export default async function ComptePage() {
         <div className="account-grid">
           <div className="account-main">
             <div className="points-box">
-              <span className="points-label">Vos points</span>
+              <span className="points-label">{t("account.pointsLabel")}</span>
               <span className="points-value gold-text">{points}</span>
-              <span className="points-note">1 € dépensé = 1 point</span>
+              <span className="points-note">{t("account.pointsNote")}</span>
             </div>
 
             <div className="account-info">
-              <h2>Mes informations</h2>
+              <h2>{t("account.infoTitle")}</h2>
               <ul>
                 <li>
-                  <span>Nom</span>
+                  <span>{t("account.name")}</span>
                   <strong>{profile?.full_name || "—"}</strong>
                 </li>
                 <li>
-                  <span>Email</span>
+                  <span>{t("account.email")}</span>
                   <strong>{profile?.email || user.email}</strong>
                 </li>
                 <li>
-                  <span>Téléphone</span>
+                  <span>{t("account.phone")}</span>
                   <strong>{profile?.phone || "—"}</strong>
                 </li>
               </ul>
             </div>
 
             <div className="account-history">
-              <h2>Historique</h2>
+              <h2>{t("account.historyTitle")}</h2>
               {transactions && transactions.length > 0 ? (
                 <ul>
-                  {transactions.map((t) => (
-                    <li key={t.id}>
-                      <span>{formatDate(t.created_at)}</span>
-                      <span>{Number(t.amount_eur).toFixed(2)} €</span>
-                      <strong className="gold-text">+{t.points} pts</strong>
+                  {transactions.map((tx) => (
+                    <li key={tx.id}>
+                      <span>{formatDate(tx.created_at, locale)}</span>
+                      <span>{Number(tx.amount_eur).toFixed(2)} €</span>
+                      <strong className="gold-text">+{tx.points} {t("account.pts")}</strong>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="account-empty">
-                  Aucun point pour l'instant. Votre premier passage au salon les
-                  ajoutera ici.
-                </p>
+                <p className="account-empty">{t("account.historyEmpty")}</p>
               )}
             </div>
           </div>

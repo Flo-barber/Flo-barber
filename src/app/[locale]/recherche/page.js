@@ -3,12 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import salons from "@/data/salons";
-
-// La carte Leaflet doit être chargée uniquement côté client (pas de SSR)
-const SalonMap = dynamic(() => import("@/components/organisms/SalonMap"), {
-  ssr: false,
-  loading: () => <div className="map-loading">Chargement de la carte…</div>,
-});
+import { useT } from "@/i18n/I18nProvider";
 
 // Distance haversine (km)
 function distanceKm(a, b) {
@@ -24,13 +19,24 @@ function distanceKm(a, b) {
 }
 
 export default function RecherchePage() {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState(null);
   const [center, setCenter] = useState(null);
   const [status, setStatus] = useState(null); // 'loading' | 'error' | null
   const [distances, setDistances] = useState({});
-  const [placeholder, setPlaceholder] = useState(
-    "Rechercher par code postal ou ville"
+  const [placeholder, setPlaceholder] = useState(t("search.placeholder"));
+
+  // La carte Leaflet doit être chargée uniquement côté client (pas de SSR).
+  const SalonMap = useMemo(
+    () =>
+      dynamic(() => import("@/components/organisms/SalonMap"), {
+        ssr: false,
+        loading: () => (
+          <div className="map-loading">{t("search.mapLoading")}</div>
+        ),
+      }),
+    [t]
   );
 
   // Placeholder plus court sur mobile (manque de place)
@@ -38,14 +44,12 @@ export default function RecherchePage() {
     const mq = window.matchMedia("(max-width: 560px)");
     const update = () =>
       setPlaceholder(
-        mq.matches
-          ? "Ville ou code postal"
-          : "Rechercher par code postal ou ville"
+        mq.matches ? t("search.placeholderShort") : t("search.placeholder")
       );
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
-  }, []);
+  }, [t]);
 
   const orderedSalons = useMemo(() => {
     if (!Object.keys(distances).length) return salons;
@@ -89,7 +93,6 @@ export default function RecherchePage() {
       setActiveId(nearest.id);
       setCenter([nearest.lat, nearest.lng]);
       setStatus(null);
-      // Sur mobile, on recentre la carte au milieu de l'écran (comme au clic sur un salon)
       if (typeof window !== "undefined" && window.innerWidth <= 1040) {
         setTimeout(() => {
           document
@@ -104,7 +107,6 @@ export default function RecherchePage() {
 
   function showError() {
     setStatus("error");
-    // Sur mobile, on met le message d'erreur en évidence
     if (typeof window !== "undefined" && window.innerWidth <= 1040) {
       setTimeout(() => {
         document
@@ -119,7 +121,6 @@ export default function RecherchePage() {
     if (!s) return;
     setActiveId(id);
     setCenter([s.lat, s.lng]);
-    // Sur mobile/tablette la carte est au-dessus des cartes : on la recentre à l'écran
     if (typeof window !== "undefined" && window.innerWidth <= 1040) {
       document
         .querySelector(".search-map")
@@ -132,17 +133,20 @@ export default function RecherchePage() {
     return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
   }
 
+  const salonWord = salons.length > 1 ? t("common.salons") : t("common.salon");
+
   return (
     <div className="search">
       {/* HERO + recherche */}
       <section className="search-hero">
         <div className="container">
           <h1 className="search-hero-title">
-            Trouver votre <span className="gold-text">Flo Barber</span>
+            {t("search.titlePre")}
+            <span className="gold-text">Flo Barber</span>
           </h1>
           <div className="search-hero-sep">
             <span />
-            Parmi nos {salons.length} salon{salons.length > 1 ? "s" : ""}
+            {t("search.sepPre")} {salons.length} {salonWord}
             <span />
           </div>
 
@@ -165,12 +169,12 @@ export default function RecherchePage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
-              aria-label="Ville ou code postal"
+              aria-label={t("search.ariaInput")}
             />
             <button
               type="submit"
               className="search-bar-submit"
-              aria-label="Rechercher"
+              aria-label={t("search.ariaSubmit")}
             >
               {status === "loading" ? (
                 <svg
@@ -205,9 +209,7 @@ export default function RecherchePage() {
             </button>
           </form>
           {status === "error" && (
-            <p className="search-error">
-              Adresse introuvable. Essayez une autre ville ou code postal.
-            </p>
+            <p className="search-error">{t("search.error")}</p>
           )}
         </div>
       </section>
@@ -232,7 +234,7 @@ export default function RecherchePage() {
                 className={`salon-card ${activeId === s.id ? "active" : ""}`}
                 role="button"
                 tabIndex={0}
-                aria-label={`Voir ${s.name} sur la carte`}
+                aria-label={`${t("search.see")} ${s.name} ${t("search.onMap")}`}
                 onClick={() => selectSalon(s.id)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -247,11 +249,7 @@ export default function RecherchePage() {
                     <img src={s.image} alt={s.name} />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src="/monogram.svg"
-                      alt=""
-                      className="salon-card-ph"
-                    />
+                    <img src="/monogram.svg" alt="" className="salon-card-ph" />
                   )}
                   {distances[s.id] != null && (
                     <span className="salon-card-dist">
@@ -267,9 +265,7 @@ export default function RecherchePage() {
                     <br />
                     {s.postalCode} {s.city}
                   </p>
-                  {s.hours && (
-                    <p className="salon-card-hours">🕒 {s.hours}</p>
-                  )}
+                  {s.hours && <p className="salon-card-hours">🕒 {s.hours}</p>}
                   <a
                     href={s.planityUrl || "#"}
                     target="_blank"
@@ -277,7 +273,7 @@ export default function RecherchePage() {
                     className="salon-card-btn"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Réserver
+                    {t("search.book")}
                   </a>
                 </div>
               </li>

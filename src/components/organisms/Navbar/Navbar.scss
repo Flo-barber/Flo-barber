@@ -86,6 +86,30 @@
     flex-shrink: 0;
   }
 
+  // Bascule de langue : masquée en desktop (molecule flottante à la place),
+  // affichée au centre de la navbar en mobile.
+  &-lang {
+    display: none;
+    align-items: center;
+    gap: 2px;
+    font-family: $font-condensed;
+
+    &-btn {
+      padding: 6px 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: $text-muted;
+      border-radius: 999px;
+      line-height: 1;
+
+      &.active {
+        color: $black;
+        background: $metal-gradient;
+      }
+    }
+  }
+
   &-cta {
     display: inline-flex;
     align-items: center;
@@ -146,6 +170,10 @@
   }
 
   .nav-burger {
+    display: flex;
+  }
+
+  .nav-lang {
     display: flex;
   }
 

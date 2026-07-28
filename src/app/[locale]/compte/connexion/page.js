@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/client";
+import { useT } from "@/i18n/I18nProvider";
+import { useLocalePath } from "@/i18n/useLocalePath";
 
 export default function ConnexionPage() {
   const router = useRouter();
+  const t = useT();
+  const localePath = useLocalePath();
   const [mode, setMode] = useState("login"); // 'login' | 'signup'
   const [form, setForm] = useState({
     fullName: "",
@@ -23,8 +27,11 @@ export default function ConnexionPage() {
   }
 
   function redirectTarget() {
-    if (typeof window === "undefined") return "/compte";
-    return new URLSearchParams(window.location.search).get("redirect") || "/compte";
+    if (typeof window === "undefined") return localePath("/compte");
+    return (
+      new URLSearchParams(window.location.search).get("redirect") ||
+      localePath("/compte")
+    );
   }
 
   async function handleSubmit(e) {
@@ -44,11 +51,8 @@ export default function ConnexionPage() {
           },
         });
         if (error) throw error;
-        // Si la confirmation email est activée, pas de session immédiate.
         if (!data.session) {
-          setInfo(
-            "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi."
-          );
+          setInfo(t("auth.confirmInfo"));
           setMode("login");
           setStatus(null);
           return;
@@ -65,8 +69,8 @@ export default function ConnexionPage() {
     } catch (err) {
       setError(
         err?.message === "Invalid login credentials"
-          ? "Email ou mot de passe incorrect."
-          : err?.message || "Une erreur est survenue."
+          ? t("auth.errInvalid")
+          : err?.message || t("auth.errGeneric")
       );
       setStatus(null);
     }
@@ -76,19 +80,17 @@ export default function ConnexionPage() {
     <section className="auth">
       <div className="auth-card">
         <h1 className="auth-title">
-          {mode === "login" ? "Connexion" : "Créer un compte"}
+          {mode === "login" ? t("auth.loginTitle") : t("auth.signupTitle")}
         </h1>
         <p className="auth-sub">
-          {mode === "login"
-            ? "Accédez à votre carte de fidélité et vos points."
-            : "Rejoignez le programme de fidélité Flo Barber."}
+          {mode === "login" ? t("auth.loginSub") : t("auth.signupSub")}
         </p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === "signup" && (
             <>
               <label>
-                Nom complet
+                {t("auth.fullName")}
                 <input
                   type="text"
                   required
@@ -98,7 +100,7 @@ export default function ConnexionPage() {
                 />
               </label>
               <label>
-                Téléphone
+                {t("auth.phone")}
                 <input
                   type="tel"
                   value={form.phone}
@@ -109,7 +111,7 @@ export default function ConnexionPage() {
             </>
           )}
           <label>
-            Email
+            {t("auth.email")}
             <input
               type="email"
               required
@@ -119,7 +121,7 @@ export default function ConnexionPage() {
             />
           </label>
           <label>
-            Mot de passe
+            {t("auth.password")}
             <input
               type="password"
               required
@@ -137,31 +139,31 @@ export default function ConnexionPage() {
             {status === "loading"
               ? "…"
               : mode === "login"
-                ? "Se connecter"
-                : "Créer mon compte"}
+                ? t("auth.submitLogin")
+                : t("auth.submitSignup")}
           </button>
         </form>
 
         <p className="auth-switch">
           {mode === "login" ? (
             <>
-              Pas encore de compte ?{" "}
+              {t("auth.noAccount")}{" "}
               <button type="button" onClick={() => { setMode("signup"); setError(null); }}>
-                Créer un compte
+                {t("auth.createAccount")}
               </button>
             </>
           ) : (
             <>
-              Déjà inscrit ?{" "}
+              {t("auth.haveAccount")}{" "}
               <button type="button" onClick={() => { setMode("login"); setError(null); }}>
-                Se connecter
+                {t("auth.signin")}
               </button>
             </>
           )}
         </p>
 
         <p className="auth-back">
-          <Link href="/">← Retour à l'accueil</Link>
+          <Link href="/">{t("auth.back")}</Link>
         </p>
       </div>
     </section>

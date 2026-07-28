@@ -1,17 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/client";
-import { creditPoints } from "../actions";
-
-const QrScanner = dynamic(() => import("@/components/molecules/QrScanner"), {
-  ssr: false,
-  loading: () => <div className="qr-reader qr-reader--loading">Activation de la caméra…</div>,
-});
+import { creditPoints } from "@/lib/adminActions";
+import { useT } from "@/i18n/I18nProvider";
 
 export default function ScannerPage() {
+  const t = useT();
   const [client, setClient] = useState(null);
   const [scanning, setScanning] = useState(true);
   const [amount, setAmount] = useState("");
@@ -19,22 +16,34 @@ export default function ScannerPage() {
   const [err, setErr] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const handleScan = useCallback(async (decoded) => {
-    setScanning(false);
-    setErr(null);
-    setMsg(null);
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, full_name, email, points")
-      .eq("id", decoded)
-      .maybeSingle();
-    if (error || !data) {
-      setErr("Client introuvable — ce QR code n'est pas une carte valide.");
-      return;
-    }
-    setClient(data);
-  }, []);
+  const QrScanner = useMemo(
+    () =>
+      dynamic(() => import("@/components/molecules/QrScanner"), {
+        ssr: false,
+        loading: () => <div className="qr-reader qr-reader--loading">…</div>,
+      }),
+    []
+  );
+
+  const handleScan = useCallback(
+    async (decoded) => {
+      setScanning(false);
+      setErr(null);
+      setMsg(null);
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, points")
+        .eq("id", decoded)
+        .maybeSingle();
+      if (error || !data) {
+        setErr(t("scanner.notFound"));
+        return;
+      }
+      setClient(data);
+    },
+    [t]
+  );
 
   async function submit(e) {
     e.preventDefault();
@@ -47,7 +56,12 @@ export default function ScannerPage() {
       setErr(res.error);
       return;
     }
-    setMsg(`+${res.points} point(s) crédité(s) à ${client.full_name || "ce client"}.`);
+    setMsg(
+      t("scanner.credited", {
+        points: res.points,
+        name: client.full_name || t("scanner.clientFallback"),
+      })
+    );
     setClient((c) => ({ ...c, points: c.points + res.points }));
     setAmount("");
   }
@@ -65,20 +79,18 @@ export default function ScannerPage() {
       <div className="container">
         <div className="scanner-head">
           <div>
-            <p className="admin-eyebrow gold-text">Espace salon</p>
-            <h1>Scanner une carte de fidélité</h1>
+            <p className="admin-eyebrow gold-text">{t("scanner.eyebrow")}</p>
+            <h1>{t("scanner.title")}</h1>
           </div>
           <Link href="/admin" className="btn btn-outline">
-            ← Tableau de bord
+            {t("scanner.back")}
           </Link>
         </div>
 
         {scanning && !client && (
           <div className="scanner-cam">
             <QrScanner onScan={handleScan} />
-            <p className="scanner-hint">
-              Placez le QR code du client dans le cadre.
-            </p>
+            <p className="scanner-hint">{t("scanner.hint")}</p>
           </div>
         )}
 
@@ -86,7 +98,7 @@ export default function ScannerPage() {
           <div className="scanner-panel">
             <p className="auth-error">{err}</p>
             <button type="button" className="btn btn-primary" onClick={reset}>
-              Réessayer
+              {t("scanner.retry")}
             </button>
           </div>
         )}
@@ -94,10 +106,11 @@ export default function ScannerPage() {
         {client && (
           <div className="scanner-panel">
             <div className="scanner-client">
-              <span className="scanner-client-label">Client</span>
-              <strong>{client.full_name || client.email || "Client"}</strong>
+              <span className="scanner-client-label">{t("scanner.clientLabel")}</span>
+              <strong>{client.full_name || client.email || t("scanner.clientFallback")}</strong>
               <span className="scanner-client-points">
-                Solde actuel : <b className="gold-text">{client.points}</b> pts
+                {t("scanner.balance")}{" "}
+                <b className="gold-text">{client.points}</b> {t("scanner.pts")}
               </span>
             </div>
 
@@ -105,13 +118,13 @@ export default function ScannerPage() {
               <>
                 <p className="auth-info">{msg}</p>
                 <button type="button" className="btn btn-primary" onClick={reset}>
-                  Scanner un autre client
+                  {t("scanner.scanAnother")}
                 </button>
               </>
             ) : (
               <form onSubmit={submit} className="scanner-form">
                 <label>
-                  Montant payé (€)
+                  {t("scanner.amountLabel")}
                   <input
                     type="number"
                     step="0.01"
@@ -120,21 +133,21 @@ export default function ScannerPage() {
                     autoFocus
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Ex : 23.50"
+                    placeholder={t("scanner.amountPlaceholder")}
                   />
                 </label>
                 <p className="scanner-preview">
-                  Points crédités :{" "}
+                  {t("scanner.pointsPreview")}{" "}
                   <b className="gold-text">
                     {amount ? Math.floor(Number(String(amount).replace(",", ".")) || 0) : 0}
                   </b>
                 </p>
                 <div className="scanner-actions">
                   <button type="submit" className="btn btn-primary" disabled={busy}>
-                    {busy ? "…" : "Créditer les points"}
+                    {busy ? "…" : t("scanner.credit")}
                   </button>
                   <button type="button" className="btn btn-outline" onClick={reset}>
-                    Annuler
+                    {t("scanner.cancel")}
                   </button>
                 </div>
               </form>

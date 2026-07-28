@@ -1,0 +1,159 @@
+{
+  "common": {
+    "salon": "salon",
+    "salons": "salons",
+    "pts": "pts"
+  },
+  "nav": {
+    "home": "Home",
+    "find": "Find a salon",
+    "catalogue": "Catalog",
+    "account": "My account",
+    "book": "Book",
+    "language": "Language"
+  },
+  "home": {
+    "eyebrow": "Barber · Men's hairstylist · Visagist",
+    "titleLine1": "The art of the shave",
+    "titleLine2": "& the cut",
+    "sub": "Specialists in bespoke cuts & beard trims.",
+    "ctaFind": "Find a salon",
+    "ctaCatalogue": "View the catalog",
+    "servicesTitlePre": "Our ",
+    "servicesTitleAccent": "services",
+    "servicesSub": "Traditional craftsmanship in service of your style.",
+    "services": [
+      {
+        "t": "Signature cut",
+        "d": "A bespoke cut by our expert barbers, tailored to your face and your style."
+      },
+      {
+        "t": "Beard trim",
+        "d": "Shaping, trimming and grooming of the beard with the razor, using premium oils and balms."
+      },
+      {
+        "t": "Traditional shave",
+        "d": "The full ritual with straight razor and hot towel, for an unrivaled close shave."
+      }
+    ],
+    "locationsAccent": "near you",
+    "locationsDesc": "Find all our salons on an interactive map. Search by city or postal code and book directly online via Planity.",
+    "ctaMap": "Open the map"
+  },
+  "catalogue": {
+    "eyebrow": "Shop",
+    "titlePre": "Our ",
+    "titleAccent": "catalog",
+    "sub": "Our products and services are coming very soon. Stay tuned!",
+    "emptyTitle": "Coming soon",
+    "emptyText": "This page will soon host our selection of grooming products, accessories and gift cards. In the meantime, find our salons and book your appointment.",
+    "cta": "Find a salon"
+  },
+  "search": {
+    "titlePre": "Find your ",
+    "sepPre": "Among our",
+    "placeholder": "Search by postal code or city",
+    "placeholderShort": "City or postal code",
+    "ariaInput": "City or postal code",
+    "ariaSubmit": "Search",
+    "error": "Address not found. Try another city or postal code.",
+    "see": "See",
+    "onMap": "on the map",
+    "book": "Book",
+    "mapLoading": "Loading the map…"
+  },
+  "account": {
+    "eyebrow": "Loyalty program",
+    "hello": "Hello",
+    "pointsLabel": "Your points",
+    "pointsNote": "€1 spent = 1 point",
+    "infoTitle": "My information",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "historyTitle": "History",
+    "historyEmpty": "No points yet. Your first visit to the salon will add them here.",
+    "pts": "pts"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "signupTitle": "Create an account",
+    "loginSub": "Access your loyalty card and your points.",
+    "signupSub": "Join the Flo Barber loyalty program.",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "email": "Email",
+    "password": "Password",
+    "submitLogin": "Sign in",
+    "submitSignup": "Create my account",
+    "noAccount": "No account yet?",
+    "createAccount": "Create an account",
+    "haveAccount": "Already registered?",
+    "signin": "Sign in",
+    "back": "← Back to home",
+    "confirmInfo": "Account created! Check your inbox to confirm your address, then sign in.",
+    "errInvalid": "Incorrect email or password.",
+    "errGeneric": "Something went wrong."
+  },
+  "admin": {
+    "eyebrow": "Salon area",
+    "title": "Loyalty dashboard",
+    "scanClient": "Scan a client",
+    "statClients": "Clients",
+    "statPoints": "Points issued",
+    "thClient": "Client",
+    "thEmail": "Email",
+    "thPhone": "Phone",
+    "thPoints": "Points",
+    "empty": "No client registered yet."
+  },
+  "scanner": {
+    "eyebrow": "Salon area",
+    "title": "Scan a loyalty card",
+    "back": "← Dashboard",
+    "hint": "Place the client's QR code within the frame.",
+    "notFound": "Client not found — this QR code is not a valid card.",
+    "retry": "Try again",
+    "clientLabel": "Client",
+    "clientFallback": "Client",
+    "balance": "Current balance:",
+    "amountLabel": "Amount paid (€)",
+    "amountPlaceholder": "e.g. 23.50",
+    "pointsPreview": "Points credited:",
+    "credit": "Credit points",
+    "cancel": "Cancel",
+    "scanAnother": "Scan another client",
+    "credited": "+{points} point(s) credited to {name}.",
+    "pts": "pts"
+  },
+  "loyalty": {
+    "title": "Loyalty card",
+    "client": "Client",
+    "pointWord": "point",
+    "pointsWord": "points",
+    "download": "Download my card (PNG)",
+    "hint": "Show this QR code at the salon after your service to earn your points."
+  },
+  "footer": {
+    "follow": "Follow us",
+    "rights": "© {year} Flo Barber. All rights reserved."
+  },
+  "wallet": {
+    "add": "Add to Google Wallet"
+  },
+  "salonMap": {
+    "book": "Book on Planity"
+  },
+  "meta": {
+    "homeTitle": "Flo Barber — The art of the shave & the cut",
+    "homeDesc": "Welcome to Flo Barber, barber, men's hairstylist & visagist. Find the nearest salon and book your appointment online.",
+    "catalogueTitle": "Catalog",
+    "catalogueDesc": "Discover the Flo Barber catalog of products and services soon.",
+    "searchTitle": "Find a salon",
+    "searchDesc": "Locate the nearest Flo Barber salon by city or postal code on an interactive map, and book online via Planity.",
+    "searchOgTitle": "Find a salon | Flo Barber",
+    "searchOgDesc": "Locate the nearest Flo Barber salon and book your appointment online.",
+    "accountTitle": "My loyalty account",
+    "adminTitle": "Salon area"
+  }
+}

@@ -46,11 +46,31 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 - **Mutations = Server Actions** dans des fichiers `actions.js` marqués `"use server"`.
 - **Deux clients Supabase distincts** : `src/lib/supabase/server.js` (Server Components /
   actions) et `src/lib/supabase/client.js` (navigateur). Ne jamais les mélanger.
-- **`src/middleware.js`** : protège `/compte` et `/admin`, rafraîchit la session Supabase,
-  et porte un **mur d'auth Basic optionnel** (`SITE_PASSWORD`) tant que le site est en dev.
+- **`src/middleware.js`** : routing i18n (redirige vers la locale par défaut si le préfixe
+  manque), protège `/compte` et `/admin` (comparaison sur le chemin sans préfixe de locale),
+  rafraîchit la session Supabase, et porte un **mur d'auth Basic optionnel** (`SITE_PASSWORD`).
 - **Données salons** centralisées dans `src/data/salons.js` (format objet documenté en tête
   du fichier). Ajouter/éditer un salon = éditer ce tableau, rien d'autre.
 - Métadonnées SEO par page (`metadata`), `sitemap.js`, `robots.js` à tenir à jour.
+
+## 4bis. Internationalisation (FR / EN) — custom, sans dépendance
+
+- **Routing par URL** : toutes les pages vivent sous `src/app/[locale]/…` ; locales dans
+  `src/i18n/config.js` (`["fr","en"]`, défaut `fr`). `manifest.js`, `robots.js`, `sitemap.js`
+  restent à la racine `src/app/` (hors locale).
+- **Dictionnaires** clé/valeur : `src/locales/fr.json` et `src/locales/en.json` (imbriqués,
+  notation pointée). Toute chaîne visible passe par une clé — jamais de texte en dur dans le JSX.
+- **Serveur** (Server Components / `generateMetadata`) : `getT(locale)` depuis
+  `src/i18n/dictionaries.js` → `t("home.hero.title")`. La locale vient de `params.locale`.
+- **Client** : `<I18nProvider>` (dans `[locale]/layout.js`) fournit `useT()` et `useI18n()`.
+  Le dictionnaire est passé par le serveur (pas de fetch client).
+- **Liens** : utiliser `@/i18n/Link` (préfixe la locale automatiquement), jamais `next/link`
+  directement pour la navigation interne. Navigation programmatique : `useLocalePath()`.
+- **Placeholders** : `t("scanner.credited", { points, name })` remplace `{x}`.
+- Sélecteur de langue : molecule flottante `LanguageSwitcher` fixée en haut à droite (hors
+  navbar, rendue dans `[locale]/layout.js`) ; bascule le segment de locale de l'URL courante.
+- Reliquat connu : les messages d'erreur renvoyés par les **server actions**
+  (`src/lib/adminActions.js`, `src/lib/walletActions.js`) restent en français.
 
 ## 5. Sécurité — principe directeur À NE JAMAIS CASSER
 

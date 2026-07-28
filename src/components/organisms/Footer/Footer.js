@@ -1,8 +1,12 @@
-import Link from "next/link";
+"use client";
+
+import Link from "@/i18n/Link";
 import Logo from "@/components/atoms/Logo";
+import { useT } from "@/i18n/I18nProvider";
 import "./Footer.scss";
 
 export default function Footer() {
+  const t = useT();
   return (
     <footer className="footer">
       <div className="container footer-inner">
@@ -11,18 +15,18 @@ export default function Footer() {
           <p>
             FLO <span className="gold-text">BARBER</span>
             <br />
-            <span className="footer-tag">L'art du rasage & de la coupe</span>
+            <span className="footer-tag">{t("home.titleLine1")} {t("home.titleLine2")}</span>
           </p>
         </div>
 
         <nav className="footer-nav">
-          <Link href="/">Accueil</Link>
-          <Link href="/recherche">Trouver un salon</Link>
-          <Link href="/catalogue">Catalogue</Link>
+          <Link href="/">{t("nav.home")}</Link>
+          <Link href="/recherche">{t("nav.find")}</Link>
+          <Link href="/catalogue">{t("nav.catalogue")}</Link>
         </nav>
 
         <div className="footer-social">
-          <span className="footer-social-title">Suivez-nous</span>
+          <span className="footer-social-title">{t("footer.follow")}</span>
           <div className="footer-social-links">
             <a
               href="https://www.instagram.com/flo_barber/?hl=en"
@@ -82,7 +86,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-legal">
-          <p>© {new Date().getFullYear()} Flo Barber. Tous droits réservés.</p>
+          <p>{t("footer.rights", { year: new Date().getFullYear() })}</p>
         </div>
       </div>
     </footer>

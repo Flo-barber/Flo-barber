@@ -1,19 +1,25 @@
+import { locales } from "@/i18n/config";
+
 export default function sitemap() {
   const base = "https://flo-barber.vercel.app";
   const now = new Date();
-  return [
-    { url: `${base}/`, lastModified: now, changeFrequency: "monthly", priority: 1 },
-    {
-      url: `${base}/recherche`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/catalogue`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
+  const pages = [
+    { path: "", priority: 1 },
+    { path: "/recherche", priority: 0.8 },
+    { path: "/catalogue", priority: 0.5 },
   ];
+
+  return locales.flatMap((locale) =>
+    pages.map((p) => ({
+      url: `${base}/${locale}${p.path}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: p.priority,
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map((l) => [l, `${base}/${l}${p.path}`])
+        ),
+      },
+    }))
+  );
 }

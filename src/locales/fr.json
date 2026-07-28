@@ -1,0 +1,159 @@
+{
+  "common": {
+    "salon": "salon",
+    "salons": "salons",
+    "pts": "pts"
+  },
+  "nav": {
+    "home": "Accueil",
+    "find": "Trouver un salon",
+    "catalogue": "Catalogue",
+    "account": "Mon compte",
+    "book": "Réserver",
+    "language": "Langue"
+  },
+  "home": {
+    "eyebrow": "Barbier · Coiffeur homme · Visagiste",
+    "titleLine1": "L'art du rasage",
+    "titleLine2": "& de la coupe",
+    "sub": "Spécialiste en coupes & taille de barbe sur-mesure.",
+    "ctaFind": "Trouver un salon",
+    "ctaCatalogue": "Voir le catalogue",
+    "servicesTitlePre": "Nos ",
+    "servicesTitleAccent": "prestations",
+    "servicesSub": "Un savoir-faire traditionnel au service de votre style.",
+    "services": [
+      {
+        "t": "Coupe signature",
+        "d": "Une coupe sur-mesure réalisée par nos barbiers experts, adaptée à votre visage et votre style."
+      },
+      {
+        "t": "Taille de barbe",
+        "d": "Dessin, taille et entretien de la barbe au rasoir, avec soin des huiles et baumes premium."
+      },
+      {
+        "t": "Rasage traditionnel",
+        "d": "Le rituel complet au coupe-chou et serviette chaude, pour un rasage de près incomparable."
+      }
+    ],
+    "locationsAccent": "près de chez vous",
+    "locationsDesc": "Retrouvez l'ensemble de nos salons sur une carte interactive. Recherchez par ville ou code postal et réservez directement en ligne via Planity.",
+    "ctaMap": "Ouvrir la carte"
+  },
+  "catalogue": {
+    "eyebrow": "Boutique",
+    "titlePre": "Notre ",
+    "titleAccent": "catalogue",
+    "sub": "Nos produits et prestations arrivent très bientôt. Restez connecté !",
+    "emptyTitle": "Bientôt disponible",
+    "emptyText": "Cette page accueillera prochainement notre sélection de produits de soin, accessoires et cartes cadeaux. En attendant, retrouvez nos salons et réservez votre rendez-vous.",
+    "cta": "Trouver un salon"
+  },
+  "search": {
+    "titlePre": "Trouver votre ",
+    "sepPre": "Parmi nos",
+    "placeholder": "Rechercher par code postal ou ville",
+    "placeholderShort": "Ville ou code postal",
+    "ariaInput": "Ville ou code postal",
+    "ariaSubmit": "Rechercher",
+    "error": "Adresse introuvable. Essayez une autre ville ou code postal.",
+    "see": "Voir",
+    "onMap": "sur la carte",
+    "book": "Réserver",
+    "mapLoading": "Chargement de la carte…"
+  },
+  "account": {
+    "eyebrow": "Programme de fidélité",
+    "hello": "Bonjour",
+    "pointsLabel": "Vos points",
+    "pointsNote": "1 € dépensé = 1 point",
+    "infoTitle": "Mes informations",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "historyTitle": "Historique",
+    "historyEmpty": "Aucun point pour l'instant. Votre premier passage au salon les ajoutera ici.",
+    "pts": "pts"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "signupTitle": "Créer un compte",
+    "loginSub": "Accédez à votre carte de fidélité et vos points.",
+    "signupSub": "Rejoignez le programme de fidélité Flo Barber.",
+    "fullName": "Nom complet",
+    "phone": "Téléphone",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submitLogin": "Se connecter",
+    "submitSignup": "Créer mon compte",
+    "noAccount": "Pas encore de compte ?",
+    "createAccount": "Créer un compte",
+    "haveAccount": "Déjà inscrit ?",
+    "signin": "Se connecter",
+    "back": "← Retour à l'accueil",
+    "confirmInfo": "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.",
+    "errInvalid": "Email ou mot de passe incorrect.",
+    "errGeneric": "Une erreur est survenue."
+  },
+  "admin": {
+    "eyebrow": "Espace salon",
+    "title": "Tableau de bord fidélité",
+    "scanClient": "Scanner un client",
+    "statClients": "Clients",
+    "statPoints": "Points distribués",
+    "thClient": "Client",
+    "thEmail": "Email",
+    "thPhone": "Téléphone",
+    "thPoints": "Points",
+    "empty": "Aucun client inscrit pour l'instant."
+  },
+  "scanner": {
+    "eyebrow": "Espace salon",
+    "title": "Scanner une carte de fidélité",
+    "back": "← Tableau de bord",
+    "hint": "Placez le QR code du client dans le cadre.",
+    "notFound": "Client introuvable — ce QR code n'est pas une carte valide.",
+    "retry": "Réessayer",
+    "clientLabel": "Client",
+    "clientFallback": "Client",
+    "balance": "Solde actuel :",
+    "amountLabel": "Montant payé (€)",
+    "amountPlaceholder": "Ex : 23.50",
+    "pointsPreview": "Points crédités :",
+    "credit": "Créditer les points",
+    "cancel": "Annuler",
+    "scanAnother": "Scanner un autre client",
+    "credited": "+{points} point(s) crédité(s) à {name}.",
+    "pts": "pts"
+  },
+  "loyalty": {
+    "title": "Carte de fidélité",
+    "client": "Client",
+    "pointWord": "point",
+    "pointsWord": "points",
+    "download": "Télécharger ma carte (PNG)",
+    "hint": "Présentez ce QR code au salon après votre prestation pour cumuler vos points."
+  },
+  "footer": {
+    "follow": "Suivez-nous",
+    "rights": "© {year} Flo Barber. Tous droits réservés."
+  },
+  "wallet": {
+    "add": "Ajouter à Google Wallet"
+  },
+  "salonMap": {
+    "book": "Réserver sur Planity"
+  },
+  "meta": {
+    "homeTitle": "Flo Barber — L'art du rasage & de la coupe",
+    "homeDesc": "Bienvenue chez Flo Barber, barbier, coiffeur homme & visagiste. Trouvez le salon le plus proche et réservez votre rendez-vous en ligne.",
+    "catalogueTitle": "Catalogue",
+    "catalogueDesc": "Découvrez bientôt le catalogue de produits et prestations Flo Barber.",
+    "searchTitle": "Trouver un salon",
+    "searchDesc": "Localisez le salon Flo Barber le plus proche par ville ou code postal, sur une carte interactive, et réservez en ligne via Planity.",
+    "searchOgTitle": "Trouver un salon | Flo Barber",
+    "searchOgDesc": "Localisez le salon Flo Barber le plus proche et réservez votre rendez-vous en ligne.",
+    "accountTitle": "Mon compte fidélité",
+    "adminTitle": "Espace salon"
+  }
+}

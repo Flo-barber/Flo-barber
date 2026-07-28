@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
+import { useT } from "@/i18n/I18nProvider";
 import "leaflet/dist/leaflet.css";
 import "./SalonMap.scss"; // après leaflet.css : nos overrides priment par cascade
 
@@ -47,6 +48,7 @@ export default function SalonMap({
   zoom,
   onSelect,
 }) {
+  const t = useT();
   const initialCenter = center || [46.7, 2.5]; // centre de la France par défaut
   // Sur mobile, la vue France par défaut est dézoomée d'un cran (5 au lieu de 6)
   const isMobile =
@@ -108,7 +110,7 @@ export default function SalonMap({
                 rel="noopener noreferrer"
                 className="salon-popup-btn"
               >
-                Réserver sur Planity
+                {t("salonMap.book")}
               </a>
             </div>
           </Popup>

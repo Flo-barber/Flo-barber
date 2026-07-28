@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { getWalletSaveUrl } from "@/app/compte/actions";
+import { getWalletSaveUrl } from "@/lib/walletActions";
+import { useT } from "@/i18n/I18nProvider";
 import "./AddToGoogleWallet.scss";
 
 export default function AddToGoogleWallet() {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
 
@@ -35,7 +37,7 @@ export default function AddToGoogleWallet() {
           />
           <path fill="currentColor" d="M6 5h10a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2Z" />
         </svg>
-        {busy ? "…" : "Ajouter à Google Wallet"}
+        {busy ? "…" : t("wallet.add")}
       </button>
       {err && <p className="auth-error">{err}</p>}
     </>

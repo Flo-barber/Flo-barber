@@ -3,10 +3,12 @@
 import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import AddToGoogleWallet from "@/components/molecules/AddToGoogleWallet";
+import { useT } from "@/i18n/I18nProvider";
 import "./LoyaltyCard.scss";
 
 // Carte de fidélité : QR encodant l'identifiant du client, téléchargeable en PNG.
 export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
+  const t = useT();
   const wrapRef = useRef(null);
 
   function download() {
@@ -25,7 +27,7 @@ export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
         <div className="loyalty-card-head">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/wordmark.svg" alt="Flo Barber" className="loyalty-card-logo" />
-          <span className="loyalty-card-tag">Carte de fidélité</span>
+          <span className="loyalty-card-tag">{t("loyalty.title")}</span>
         </div>
 
         <div className="loyalty-card-qr" ref={wrapRef}>
@@ -40,22 +42,21 @@ export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
         </div>
 
         <div className="loyalty-card-foot">
-          <strong>{name || "Client"}</strong>
+          <strong>{name || t("loyalty.client")}</strong>
           <span>
-            <b className="gold-text">{points}</b> point{points > 1 ? "s" : ""}
+            <b className="gold-text">{points}</b>{" "}
+            {points > 1 ? t("loyalty.pointsWord") : t("loyalty.pointWord")}
           </span>
         </div>
       </div>
 
       <button type="button" className="btn btn-primary" onClick={download}>
-        Télécharger ma carte (PNG)
+        {t("loyalty.download")}
       </button>
 
       {walletEnabled && <AddToGoogleWallet />}
 
-      <p className="loyalty-hint">
-        Présentez ce QR code au salon après votre prestation pour cumuler vos points.
-      </p>
+      <p className="loyalty-hint">{t("loyalty.hint")}</p>
     </div>
   );
 }

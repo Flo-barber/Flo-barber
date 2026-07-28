@@ -1,13 +1,28 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { locales, defaultLocale } from "@/i18n/config";
 
-// Pages nécessitant une session Supabase (les autres n'appellent pas Supabase → navigation instantanée)
+// Pages nécessitant une session Supabase (comparé au chemin SANS préfixe de locale).
 const PROTECTED = ["/compte", "/admin"];
+
+function hasLocalePrefix(pathname) {
+  return locales.some(
+    (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`)
+  );
+}
+
+// Retire le préfixe de locale : /fr/compte -> /compte, /en -> /
+function stripLocale(pathname) {
+  for (const l of locales) {
+    if (pathname === `/${l}`) return "/";
+    if (pathname.startsWith(`/${l}/`)) return pathname.slice(l.length + 1);
+  }
+  return pathname;
+}
 
 export async function middleware(request) {
   // --- Mur d'authentification (site en développement) ---
-  // Actif uniquement si SITE_PASSWORD est défini. Pour ouvrir le site au public,
-  // il suffit de supprimer cette variable d'environnement et de redéployer.
+  // Actif uniquement si SITE_PASSWORD est défini.
   if (process.env.SITE_PASSWORD) {
     const expected =
       "Basic " +
@@ -21,9 +36,18 @@ export async function middleware(request) {
   }
 
   const { pathname } = request.nextUrl;
-  const needsAuth = PROTECTED.some((p) => pathname.startsWith(p));
 
-  // Pages publiques ou Supabase non configuré → on ne fait aucun appel réseau.
+  // --- Routing i18n : redirige vers la locale par défaut si le préfixe est absent ---
+  if (!hasLocalePrefix(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}${pathname === "/" ? "" : pathname}`;
+    return NextResponse.redirect(url);
+  }
+
+  const bare = stripLocale(pathname);
+  const needsAuth = PROTECTED.some((p) => bare === p || bare.startsWith(`${p}/`));
+
+  // Pages publiques ou Supabase non configuré → aucun appel réseau.
   if (
     !needsAuth ||
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||

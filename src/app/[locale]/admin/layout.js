@@ -1,19 +1,24 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/dictionaries";
 
-export const metadata = {
-  title: "Espace salon",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  return {
+    title: getT(locale)("meta.adminTitle"),
+    robots: { index: false, follow: false },
+  };
+}
 
-export default async function AdminLayout({ children }) {
+export default async function AdminLayout({ children, params }) {
+  const { locale } = await params;
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/compte/connexion?redirect=/admin");
+    redirect(`/${locale}/compte/connexion?redirect=/${locale}/admin`);
   }
 
   const { data: admin } = await supabase
@@ -24,7 +29,7 @@ export default async function AdminLayout({ children }) {
 
   if (!admin) {
     // Connecté mais pas administrateur → renvoyé vers l'espace client
-    redirect("/compte");
+    redirect(`/${locale}/compte`);
   }
 
   return children;
