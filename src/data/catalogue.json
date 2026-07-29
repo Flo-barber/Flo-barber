@@ -1,0 +1,114 @@
+{
+  "cuts": [
+    {
+      "slug": "fade-classique",
+      "title": { "fr": "Fade classique", "en": "Classic fade" },
+      "description": {
+        "fr": "Dégradé progressif sur les côtés et la nuque, longueur travaillée sur le dessus. Une coupe nette et intemporelle, adaptée à tous les styles.",
+        "en": "Progressive taper on the sides and nape, worked length on top. A clean, timeless cut that suits every style."
+      },
+      "images": [
+        { "src": "/catalogue/fade-classique-1.jpg", "alt": { "fr": "Fade classique, vue de face", "en": "Classic fade, front view" } },
+        { "src": "/catalogue/fade-classique-2.jpg", "alt": { "fr": "Fade classique, profil", "en": "Classic fade, side view" } },
+        { "src": "/catalogue/fade-classique-3.jpg", "alt": { "fr": "Fade classique, nuque", "en": "Classic fade, nape" } }
+      ],
+      "products": ["pommade-mate", "spray-texturisant"]
+    },
+    {
+      "slug": "undercut",
+      "title": { "fr": "Undercut", "en": "Undercut" },
+      "description": {
+        "fr": "Contraste marqué entre des côtés très courts et un dessus long à coiffer en arrière. Un look affirmé, facile à styliser au quotidien.",
+        "en": "Bold contrast between very short sides and a long top to slick back. A statement look, easy to style day to day."
+      },
+      "images": [
+        { "src": "/catalogue/undercut-1.jpg", "alt": { "fr": "Undercut, vue de face", "en": "Undercut, front view" } },
+        { "src": "/catalogue/undercut-2.jpg", "alt": { "fr": "Undercut, profil", "en": "Undercut, side view" } }
+      ],
+      "products": ["cire-coiffante", "huile-barbe"]
+    },
+    {
+      "slug": "crop-francais",
+      "title": { "fr": "Crop français", "en": "French crop" },
+      "description": {
+        "fr": "Frange texturée portée vers l'avant, côtés dégradés. Un rendu mat et moderne qui demande peu d'entretien.",
+        "en": "Textured fringe worn forward, tapered sides. A modern, matte finish that needs little upkeep."
+      },
+      "images": [
+        { "src": "/catalogue/crop-francais-1.jpg", "alt": { "fr": "Crop français, vue de face", "en": "French crop, front view" } },
+        { "src": "/catalogue/crop-francais-2.jpg", "alt": { "fr": "Crop français, profil", "en": "French crop, side view" } }
+      ],
+      "products": ["pommade-mate"]
+    },
+    {
+      "slug": "pompadour",
+      "title": { "fr": "Pompadour", "en": "Pompadour" },
+      "description": {
+        "fr": "Volume travaillé vers l'arrière et le haut, côtés courts. Un grand classique élégant qui met en valeur la matière.",
+        "en": "Volume worked up and back, short sides. An elegant classic that showcases the hair's texture."
+      },
+      "images": [
+        { "src": "/catalogue/pompadour-1.jpg", "alt": { "fr": "Pompadour, vue de face", "en": "Pompadour, front view" } },
+        { "src": "/catalogue/pompadour-2.jpg", "alt": { "fr": "Pompadour, profil", "en": "Pompadour, side view" } },
+        { "src": "/catalogue/pompadour-3.jpg", "alt": { "fr": "Pompadour, arrière", "en": "Pompadour, back" } }
+      ],
+      "products": ["pommade-mate", "cire-coiffante", "spray-texturisant"]
+    },
+    {
+      "slug": "buzz-cut",
+      "title": { "fr": "Buzz cut", "en": "Buzz cut" },
+      "description": {
+        "fr": "Coupe très courte et uniforme à la tondeuse. Minimaliste, sans entretien, idéale pour un style franc.",
+        "en": "Very short, uniform clipper cut. Minimalist, zero-maintenance, ideal for a no-nonsense style."
+      },
+      "images": [
+        { "src": "/catalogue/buzz-cut-1.jpg", "alt": { "fr": "Buzz cut, vue de face", "en": "Buzz cut, front view" } }
+      ],
+      "products": ["baume-apres-rasage"]
+    }
+  ],
+  "products": [
+    {
+      "slug": "pommade-mate",
+      "name": { "fr": "Pommade mate", "en": "Matte pomade" },
+      "tagline": { "fr": "Fixation forte, fini naturel", "en": "Strong hold, natural finish" },
+      "price": "16,90 €",
+      "image": "/catalogue/products/pommade-mate.jpg"
+    },
+    {
+      "slug": "cire-coiffante",
+      "name": { "fr": "Cire coiffante", "en": "Styling wax" },
+      "tagline": { "fr": "Tenue souple et matière", "en": "Flexible hold and texture" },
+      "price": "14,90 €",
+      "image": "/catalogue/products/cire-coiffante.jpg"
+    },
+    {
+      "slug": "huile-barbe",
+      "name": { "fr": "Huile à barbe", "en": "Beard oil" },
+      "tagline": { "fr": "Nourrit et assouplit", "en": "Nourishes and softens" },
+      "price": "19,90 €",
+      "image": "/catalogue/products/huile-barbe.jpg"
+    },
+    {
+      "slug": "shampoing-solide",
+      "name": { "fr": "Shampoing solide", "en": "Solid shampoo" },
+      "tagline": { "fr": "Nettoyant doux, zéro déchet", "en": "Gentle cleanse, zero waste" },
+      "price": "11,90 €",
+      "image": "/catalogue/products/shampoing-solide.jpg"
+    },
+    {
+      "slug": "spray-texturisant",
+      "name": { "fr": "Spray texturisant", "en": "Texturising spray" },
+      "tagline": { "fr": "Volume et effet matière", "en": "Volume and texture" },
+      "price": "17,90 €",
+      "image": "/catalogue/products/spray-texturisant.jpg"
+    },
+    {
+      "slug": "baume-apres-rasage",
+      "name": { "fr": "Baume après-rasage", "en": "Aftershave balm" },
+      "tagline": { "fr": "Apaise et hydrate", "en": "Soothes and hydrates" },
+      "price": "15,90 €",
+      "image": "/catalogue/products/baume-apres-rasage.jpg"
+    }
+  ]
+}

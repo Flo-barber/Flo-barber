@@ -49,6 +49,20 @@
     "emptyText": "This page will soon host our selection of grooming products, accessories and gift cards. In the meantime, find our salons and book your appointment.",
     "cta": "Find a salon"
   },
+  "cataloguePage": {
+    "intro": "Browse our signature cuts: pick one to see the photo and the products used.",
+    "cut": "Cut",
+    "photo": "Photo",
+    "prevPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "productsUsed": "Products used"
+  },
+  "boutique": {
+    "soonBadge": "Coming soon",
+    "soonText": "The shop is launching soon. This product will be available to buy online shortly.",
+    "backCatalogue": "← Back to the catalog",
+    "notFound": "Product not found."
+  },
   "search": {
     "titlePre": "Find your ",
     "sepPre": "Among our",

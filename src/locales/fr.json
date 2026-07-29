@@ -49,6 +49,20 @@
     "emptyText": "Cette page accueillera prochainement notre sélection de produits de soin, accessoires et cartes cadeaux. En attendant, retrouvez nos salons et réservez votre rendez-vous.",
     "cta": "Trouver un salon"
   },
+  "cataloguePage": {
+    "intro": "Parcourez nos coupes signature : sélectionnez-en une pour voir la photo et les produits utilisés.",
+    "cut": "Coupe",
+    "photo": "Photo",
+    "prevPhoto": "Photo précédente",
+    "nextPhoto": "Photo suivante",
+    "productsUsed": "Produits utilisés"
+  },
+  "boutique": {
+    "soonBadge": "Bientôt",
+    "soonText": "La boutique arrive prochainement. Ce produit sera bientôt disponible à l'achat en ligne.",
+    "backCatalogue": "← Retour au catalogue",
+    "notFound": "Produit introuvable."
+  },
   "search": {
     "titlePre": "Trouver votre ",
     "sepPre": "Parmi nos",

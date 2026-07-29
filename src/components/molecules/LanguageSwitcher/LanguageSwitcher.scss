@@ -40,6 +40,13 @@
   }
 }
 
+// Entre le passage mobile et 1200px : descendu sous la navbar (95px du haut).
+@media (max-width: 1200px) {
+  .lang-switch {
+    top: 95px;
+  }
+}
+
 // En mobile, la bascule de langue est intégrée dans la navbar (voir Navbar.scss).
 @media (max-width: $bp-nav) {
   .lang-switch {

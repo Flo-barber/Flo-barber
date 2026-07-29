@@ -28,7 +28,13 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 **Vitrine publique**
 - `/` — accueil (hero, prestations, aperçu salons).
 - `/recherche` — carte Leaflet + recherche ville/CP + tri par proximité (`"use client"`).
-- `/catalogue` — placeholder produits (à construire).
+- `/catalogue` — coupes signature : organism client `CatalogueViewer`. **Roue infinie custom**
+  (sans dépendance) pilotée par un unique index `active` (modulo → boucle sans fin, toujours
+  3 coupes au-dessus/3 en dessous ; molette/glisser/flèches ; animation via WAAPI). La photo
+  centrale et la description découlent d'`active` (alignement garanti). Galerie multi-photos
+  (thumbs + prev/next). Données mock bilingues dans `src/data/catalogue.json`.
+- `/boutique/[slug]` — **STUB** de fiche produit (placeholder « bientôt »). La vraie boutique
+  (panier, paiement, stock) reste à construire ; la route + les données mock préparent le terrain.
 
 **Espace client** `/compte` (protégé)
 - Auth Supabase via `/compte/connexion`.

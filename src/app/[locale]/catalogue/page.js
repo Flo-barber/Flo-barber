@@ -1,5 +1,5 @@
-import Link from "@/i18n/Link";
 import { getT } from "@/i18n/dictionaries";
+import CatalogueViewer from "@/components/organisms/CatalogueViewer";
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
@@ -23,16 +23,11 @@ export default async function CataloguePage({ params }) {
           {t("catalogue.titlePre")}
           <span className="gold-text">{t("catalogue.titleAccent")}</span>
         </h1>
-        <p className="section-subtitle">{t("catalogue.sub")}</p>
+        <p className="section-subtitle">{t("cataloguePage.intro")}</p>
+      </div>
 
-        <div className="catalogue-empty">
-          <div className="catalogue-icon gold-text">✦</div>
-          <h2>{t("catalogue.emptyTitle")}</h2>
-          <p>{t("catalogue.emptyText")}</p>
-          <Link href="/recherche" className="btn btn-primary">
-            {t("catalogue.cta")}
-          </Link>
-        </div>
+      <div className="container">
+        <CatalogueViewer />
       </div>
     </section>
   );
