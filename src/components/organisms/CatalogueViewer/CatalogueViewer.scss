@@ -20,6 +20,7 @@
   overflow: hidden;
   cursor: grab;
   touch-action: none;
+  user-select: none;
   outline: none;
   // Fondu haut/bas pour renforcer l'effet de roue
   -webkit-mask-image: linear-gradient(
@@ -91,6 +92,50 @@
   }
 }
 
+// Variante mobile : roue horizontale (défile gauche ↔ droite)
+.cv-list.is-horizontal {
+  // pan-y : le geste vertical scrolle la page, l'horizontal pilote la roue.
+  touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+
+  .cv-list-btn {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    width: 140px;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    text-align: center;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    transform-origin: center;
+
+    &.active {
+      border-color: $metal;
+    }
+  }
+
+  .cv-list-title {
+    font-size: 1.1rem;
+    max-width: 100%;
+  }
+}
+
 // --- Colonne centre : carrousel photo avec aperçu haut/bas ---
 .cv-photo {
   // --peek : hauteur visible des photos voisines ; --pgap : écart entre photos.
@@ -98,12 +143,14 @@
   --peek: 72px;
   --pgap: 14px;
   --slide-h: calc(var(--cv-h) - 2 * var(--peek));
+  --slide-w: calc(100% - 2 * var(--peek)); // remplacé en px par le JS (mode horizontal)
   position: relative;
   height: var(--cv-h);
   min-width: 0;
   overflow: hidden;
   cursor: grab;
   touch-action: none;
+  user-select: none;
 
   &:active {
     cursor: grabbing;
@@ -138,6 +185,10 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    // L'image ne capte pas le pointeur → c'est le carrousel qu'on « attrape ».
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &-controls {
@@ -185,6 +236,20 @@
     min-width: 42px;
     text-align: center;
   }
+}
+
+// Variante mobile : carrousel photo horizontal (aperçu gauche ↔ droite)
+.cv-photo.is-horizontal {
+  // pan-y : le geste vertical scrolle la page, l'horizontal pilote le carrousel.
+  touch-action: pan-y;
+}
+
+.cv-photo.is-horizontal .cv-photo-slide {
+  left: 50%;
+  right: auto;
+  top: 50%;
+  width: var(--slide-w);
+  height: 100%;
 }
 
 // --- Colonne droite : description ---
@@ -326,7 +391,7 @@
   }
 
   .cv-list {
-    height: 150px;
+    height: 128px;
   }
 
   .cv-photo {
@@ -334,6 +399,9 @@
     --cv-h: min(58vh, 520px);
     --peek: 52px;
     height: var(--cv-h);
+    // Full-bleed : le carrousel déborde le conteneur sur toute la largeur d'écran.
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
 
   .cv-desc {

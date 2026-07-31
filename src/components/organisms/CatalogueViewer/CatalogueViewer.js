@@ -17,11 +17,13 @@ import "./CatalogueViewer.scss";
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-// Roue des titres (gauche) : hauteur d'un cran (cohérent avec le SCSS).
-const ROW_H = 58;
+// Roue des titres : pas d'un cran — vertical (desktop) ou horizontal (mobile).
+const ROW_H = 58; // pas vertical (desktop)
+const COL_W = 150; // pas horizontal (mobile)
 const LIST_OFFSETS = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
-// Carrousel photo (centre) : marge d'aperçu haut/bas + écart (cohérent SCSS).
-const PHOTO_PEEK = 72;
+// Carrousel photo (centre) : marge d'aperçu + écart (cohérent SCSS).
+const PHOTO_PEEK = 72; // aperçu vertical (desktop)
+const PHOTO_PEEK_H = 28; // aperçu horizontal (mobile) — plus petit = photo centrale plus large
 const PHOTO_GAP = 14;
 const PHOTO_OFFSETS = [-2, -1, 0, 1, 2];
 
@@ -37,6 +39,16 @@ export default function CatalogueViewer() {
 
   const [active, setActive] = useState(0);
   const [photo, setPhoto] = useState(0);
+  const [horizontal, setHorizontal] = useState(false); // roue horizontale en mobile
+
+  // Détecte le passage en mode mobile (roue de titres horizontale).
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 980px)");
+    const update = () => setHorizontal(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const listRef = useRef(null);
   const listTrackRef = useRef(null);
@@ -46,6 +58,9 @@ export default function CatalogueViewer() {
   const lockRef = useRef(0);
   const dragRef = useRef(null);
   const draggedRef = useRef(false);
+  const fracRef = useRef(0); // position du drag en fraction d'un cran (-1..1)
+  const dragAnimsRef = useRef([]); // animations de snap en cours
+  const suppressAnimRef = useRef(false); // saute l'anim standard lors d'un commit de drag
 
   const cut = cuts[active];
   const images = cut.images;
@@ -76,25 +91,64 @@ export default function CatalogueViewer() {
   // useLayoutEffect : lance les animations AVANT le paint pour éviter tout saut.
   useIsoLayoutEffect(() => {
     setPhoto(0);
+
+    // Commit d'un drag : le snap a déjà positionné les pistes sur la coupe voisine.
+    // On recentre juste le contenu (transforms remis à 0) sans rejouer d'animation.
+    if (suppressAnimRef.current) {
+      suppressAnimRef.current = false;
+      dragAnimsRef.current.forEach((a) => a && a.cancel());
+      dragAnimsRef.current = [];
+      if (listTrackRef.current) listTrackRef.current.style.transform = "";
+      if (photoTrackRef.current) photoTrackRef.current.style.transform = "";
+      fracRef.current = 0;
+      return;
+    }
+
     const dir = dirRef.current;
     const opts = {
       duration: 380,
       easing: "cubic-bezier(0.33, 1, 0.68, 1)", // ease-out doux
       fill: "backwards",
     };
-    listTrackRef.current?.animate(
-      [{ transform: `translateY(${dir * ROW_H}px)` }, { transform: "translateY(0)" }],
-      opts
-    );
+    const listAxis = horizontal ? "X" : "Y";
+    const listStep = horizontal ? COL_W : ROW_H;
+    if (listTrackRef.current) {
+      listTrackRef.current.style.transform = "";
+      listTrackRef.current.animate(
+        [
+          { transform: `translate${listAxis}(${dir * listStep}px)` },
+          { transform: `translate${listAxis}(0)` },
+        ],
+        opts
+      );
+    }
     const vp = photoRef.current;
     if (photoTrackRef.current && vp) {
-      const step = vp.clientHeight - 2 * PHOTO_PEEK + PHOTO_GAP;
+      const axis = horizontal ? "X" : "Y";
+      const size = horizontal ? vp.clientWidth : vp.clientHeight;
+      const peek = horizontal ? PHOTO_PEEK_H : PHOTO_PEEK;
+      const step = size - 2 * peek + PHOTO_GAP;
+      photoTrackRef.current.style.transform = "";
       photoTrackRef.current.animate(
-        [{ transform: `translateY(${dir * step}px)` }, { transform: "translateY(0)" }],
+        [
+          { transform: `translate${axis}(${dir * step}px)` },
+          { transform: `translate${axis}(0)` },
+        ],
         opts
       );
     }
   }, [active]);
+
+  // Largeur d'une photo en mode horizontal (mesurée → offsets translateX exacts).
+  useIsoLayoutEffect(() => {
+    const vp = photoRef.current;
+    if (!vp) return;
+    const set = () =>
+      vp.style.setProperty("--slide-w", `${vp.clientWidth - 2 * PHOTO_PEEK_H}px`);
+    set();
+    window.addEventListener("resize", set);
+    return () => window.removeEventListener("resize", set);
+  }, [horizontal]);
 
   // Molette (non passive → on bloque le scroll de page) sur liste + photo.
   useEffect(() => {
@@ -111,29 +165,102 @@ export default function CatalogueViewer() {
     return () => els.forEach((el) => el.removeEventListener("wheel", onWheel));
   }, [go]);
 
-  // Glisser vertical (souris / tactile) — SANS pointer capture pour ne pas
-  // avaler les clics sur les titres et les boutons photo.
-  function onPointerDown(e) {
-    dragRef.current = { y: e.clientY };
+  // --- Drag suivi (les pistes suivent le doigt, max 1 section, snap au relâchement) ---
+  const listStepPx = () => (horizontal ? COL_W : ROW_H);
+  const photoStepPx = () => {
+    const vp = photoRef.current;
+    if (!vp) return 300;
+    const size = horizontal ? vp.clientWidth : vp.clientHeight;
+    const peek = horizontal ? PHOTO_PEEK_H : PHOTO_PEEK;
+    return size - 2 * peek + PHOTO_GAP;
+  };
+  const setTrackOffset = (frac) => {
+    const axis = horizontal ? "X" : "Y";
+    if (listTrackRef.current)
+      listTrackRef.current.style.transform = `translate${axis}(${frac * listStepPx()}px)`;
+    if (photoTrackRef.current)
+      photoTrackRef.current.style.transform = `translate${axis}(${frac * photoStepPx()}px)`;
+  };
+
+  const startDrag = (source) => (e) => {
+    dragAnimsRef.current.forEach((a) => a && a.cancel());
+    dragAnimsRef.current = [];
+    dragRef.current = { x: e.clientX, y: e.clientY, source };
     draggedRef.current = false;
-  }
+    fracRef.current = 0;
+  };
   function onPointerMove(e) {
     if (!dragRef.current) return;
-    const dy = e.clientY - dragRef.current.y;
-    if (Math.abs(dy) > ROW_H * 0.6) {
-      go(dy < 0 ? 1 : -1);
-      dragRef.current.y = e.clientY;
-      draggedRef.current = true;
-    }
+    const delta = horizontal
+      ? e.clientX - dragRef.current.x
+      : e.clientY - dragRef.current.y;
+    if (Math.abs(delta) > 4) draggedRef.current = true;
+    const step = dragRef.current.source === "photo" ? photoStepPx() : listStepPx();
+    // Borné à ±1 : on ne peut avancer que d'une seule section par glissement.
+    const frac = Math.max(-1, Math.min(1, delta / step));
+    fracRef.current = frac;
+    setTrackOffset(frac);
   }
   function onPointerUp() {
+    if (!dragRef.current) return;
     dragRef.current = null;
+    const frac = fracRef.current;
+    const axis = horizontal ? "X" : "Y";
+    const commit = Math.abs(frac) > 0.3; // au-delà de 30 % → on change de coupe
+    const sign = frac > 0 ? 1 : -1;
+    const lStep = listStepPx();
+    const pStep = photoStepPx();
+    const lTo = commit ? sign * lStep : 0;
+    const pTo = commit ? sign * pStep : 0;
+    const remaining = commit ? 1 - Math.abs(frac) : Math.abs(frac);
+    const opts = {
+      duration: Math.max(120, remaining * 320),
+      easing: "cubic-bezier(0.33, 1, 0.68, 1)",
+      fill: "forwards",
+    };
+    const aL = listTrackRef.current?.animate(
+      [
+        { transform: `translate${axis}(${frac * lStep}px)` },
+        { transform: `translate${axis}(${lTo}px)` },
+      ],
+      opts
+    );
+    const aP = photoTrackRef.current?.animate(
+      [
+        { transform: `translate${axis}(${frac * pStep}px)` },
+        { transform: `translate${axis}(${pTo}px)` },
+      ],
+      opts
+    );
+    dragAnimsRef.current = [aL, aP].filter(Boolean);
+    const finish = () => {
+      if (commit) {
+        // Fige la position d'arrivée (pixels identiques à la coupe voisine centrée),
+        // puis change `active` : le layout effect recentrera le contenu sans à-coup.
+        if (listTrackRef.current)
+          listTrackRef.current.style.transform = `translate${axis}(${lTo}px)`;
+        if (photoTrackRef.current)
+          photoTrackRef.current.style.transform = `translate${axis}(${pTo}px)`;
+        suppressAnimRef.current = true;
+        dirRef.current = -sign;
+        setActive((a) => mod(a - sign));
+      } else {
+        dragAnimsRef.current.forEach((a) => a && a.cancel());
+        dragAnimsRef.current = [];
+        if (listTrackRef.current) listTrackRef.current.style.transform = "";
+        if (photoTrackRef.current) photoTrackRef.current.style.transform = "";
+        fracRef.current = 0;
+      }
+    };
+    if (aP) aP.onfinish = finish;
+    else if (aL) aL.onfinish = finish;
+    else finish();
   }
   function onKeyDown(e) {
-    if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
       e.preventDefault();
       go(-1);
-    } else if (e.key === "ArrowDown") {
+    } else if (e.key === "ArrowDown" || e.key === "ArrowRight") {
       e.preventDefault();
       go(1);
     }
@@ -163,24 +290,32 @@ export default function CatalogueViewer() {
     });
   }
 
-  const dragHandlers = {
-    onPointerDown,
+  const listDrag = {
+    onPointerDown: startDrag("list"),
     onPointerMove,
     onPointerUp,
     onPointerLeave: onPointerUp,
+    onPointerCancel: onPointerUp,
+  };
+  const photoDrag = {
+    onPointerDown: startDrag("photo"),
+    onPointerMove,
+    onPointerUp,
+    onPointerLeave: onPointerUp,
+    onPointerCancel: onPointerUp,
   };
 
   return (
     <div className="catalogue-viewer">
       {/* GAUCHE : roue infinie des titres (toujours 3 au-dessus / 3 en dessous) */}
       <div
-        className="cv-list"
+        className={`cv-list ${horizontal ? "is-horizontal" : ""}`}
         ref={listRef}
         tabIndex={0}
         role="listbox"
         aria-label={t("cataloguePage.cut")}
         onKeyDown={onKeyDown}
-        {...dragHandlers}
+        {...listDrag}
       >
         <div className="cv-list-track" ref={listTrackRef}>
           {LIST_OFFSETS.map((o) => {
@@ -189,15 +324,15 @@ export default function CatalogueViewer() {
             const ad = Math.abs(o);
             const scale = Math.max(1 - ad * 0.14, 0.5);
             const opacity = ad >= 4 ? 0 : Math.max(1 - ad * 0.3, 0.12);
+            const transform = horizontal
+              ? `translate(calc(-50% + ${o * COL_W}px), -50%) scale(${scale})`
+              : `translateY(calc(-50% + ${o * ROW_H}px)) scale(${scale})`;
             return (
               <button
                 key={o}
                 type="button"
                 className={`cv-list-btn ${o === 0 ? "active" : ""}`}
-                style={{
-                  transform: `translateY(calc(-50% + ${o * ROW_H}px)) scale(${scale})`,
-                  opacity,
-                }}
+                style={{ transform, opacity }}
                 aria-selected={o === 0}
                 onClick={() => onTitleClick(o)}
               >
@@ -211,21 +346,26 @@ export default function CatalogueViewer() {
         </div>
       </div>
 
-      {/* CENTRE : carrousel photo avec aperçu haut/bas */}
-      <div className="cv-photo" ref={photoRef} {...dragHandlers}>
+      {/* CENTRE : carrousel photo avec aperçu (haut/bas en desktop, gauche/droite en mobile) */}
+      <div
+        className={`cv-photo ${horizontal ? "is-horizontal" : ""}`}
+        ref={photoRef}
+        {...photoDrag}
+      >
         <div className="cv-photo-track" ref={photoTrackRef}>
           {PHOTO_OFFSETS.map((o) => {
             const idx = mod(active + o);
             const c = cuts[idx];
             const isActive = o === 0;
             const img = isActive ? c.images[safePhoto] || c.images[0] : c.images[0];
+            const photoTransform = horizontal
+              ? `translate(calc(-50% + ${o} * (var(--slide-w) + var(--pgap))), -50%)`
+              : `translateY(calc(-50% + ${o} * (var(--slide-h) + var(--pgap))))`;
             return (
               <div
                 key={o}
                 className={`cv-photo-slide ${isActive ? "is-active" : ""}`}
-                style={{
-                  transform: `translateY(calc(-50% + ${o} * (var(--slide-h) + var(--pgap))))`,
-                }}
+                style={{ transform: photoTransform }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
