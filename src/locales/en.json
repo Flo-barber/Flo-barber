@@ -86,8 +86,18 @@
     "email": "Email",
     "phone": "Phone",
     "historyTitle": "History",
+    "save": "Update",
+    "saved": "Information updated.",
+    "saveError": "Update failed. Please try again.",
+    "emailNote": "Your e-mail is your login identifier and cannot be changed here.",
     "historyEmpty": "No points yet. Your first visit to the salon will add them here.",
-    "pts": "pts"
+    "pts": "pts",
+    "dangerZone": "Danger zone",
+    "deleteHint": "You can delete your account and all associated data at any time.",
+    "deleteButton": "Delete my account",
+    "deleting": "Deleting…",
+    "deleteConfirm": "This action is permanent and deletes all your data (account, points, history). Continue?",
+    "deleteError": "Deletion failed. Please try again or contact us."
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -107,7 +117,10 @@
     "back": "← Back to home",
     "confirmInfo": "Account created! Check your inbox to confirm your address, then sign in.",
     "errInvalid": "Incorrect email or password.",
-    "errGeneric": "Something went wrong."
+    "errGeneric": "Something went wrong.",
+    "consentBefore": "I accept the ",
+    "consentLink": "privacy policy",
+    "consentRequired": "You must accept the privacy policy."
   },
   "admin": {
     "eyebrow": "Salon area",
@@ -150,7 +163,15 @@
   },
   "footer": {
     "follow": "Follow us",
-    "rights": "© {year} Flo Barber. All rights reserved."
+    "rights": "© {year} Flo Barber. All rights reserved.",
+    "privacy": "Privacy",
+    "legalNotice": "Legal notice",
+    "terms": "Terms"
+  },
+  "cookie": {
+    "text": "This site only uses technical cookies required for your login. No tracking or advertising.",
+    "accept": "Got it",
+    "more": "Learn more"
   },
   "wallet": {
     "add": "Add to Google Wallet"

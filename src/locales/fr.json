@@ -86,8 +86,18 @@
     "email": "Email",
     "phone": "Téléphone",
     "historyTitle": "Historique",
+    "save": "Modifier",
+    "saved": "Informations mises à jour.",
+    "saveError": "La mise à jour a échoué. Réessayez.",
+    "emailNote": "Votre adresse e-mail sert d'identifiant de connexion et n'est pas modifiable ici.",
     "historyEmpty": "Aucun point pour l'instant. Votre premier passage au salon les ajoutera ici.",
-    "pts": "pts"
+    "pts": "pts",
+    "dangerZone": "Zone de danger",
+    "deleteHint": "Vous pouvez supprimer votre compte et toutes les données associées à tout moment.",
+    "deleteButton": "Supprimer mon compte",
+    "deleting": "Suppression…",
+    "deleteConfirm": "Cette action est définitive et supprime toutes vos données (compte, points, historique). Continuer ?",
+    "deleteError": "La suppression a échoué. Réessayez ou contactez-nous."
   },
   "auth": {
     "loginTitle": "Connexion",
@@ -107,7 +117,10 @@
     "back": "← Retour à l'accueil",
     "confirmInfo": "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.",
     "errInvalid": "Email ou mot de passe incorrect.",
-    "errGeneric": "Une erreur est survenue."
+    "errGeneric": "Une erreur est survenue.",
+    "consentBefore": "J'accepte la ",
+    "consentLink": "politique de confidentialité",
+    "consentRequired": "Vous devez accepter la politique de confidentialité."
   },
   "admin": {
     "eyebrow": "Espace salon",
@@ -150,7 +163,15 @@
   },
   "footer": {
     "follow": "Suivez-nous",
-    "rights": "© {year} Flo Barber. Tous droits réservés."
+    "rights": "© {year} Flo Barber. Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "legalNotice": "Mentions légales",
+    "terms": "CGV / CGU"
+  },
+  "cookie": {
+    "text": "Ce site n'utilise que des cookies techniques nécessaires à votre connexion. Aucun traçage ni publicité.",
+    "accept": "J'ai compris",
+    "more": "En savoir plus"
   },
   "wallet": {
     "add": "Ajouter à Google Wallet"

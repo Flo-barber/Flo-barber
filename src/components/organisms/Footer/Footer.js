@@ -23,6 +23,9 @@ export default function Footer() {
           <Link href="/">{t("nav.home")}</Link>
           <Link href="/recherche">{t("nav.find")}</Link>
           <Link href="/catalogue">{t("nav.catalogue")}</Link>
+          <Link href="/cgv">{t("footer.terms")}</Link>
+          <Link href="/confidentialite">{t("footer.privacy")}</Link>
+          <Link href="/mentions-legales">{t("footer.legalNotice")}</Link>
         </nav>
 
         <div className="footer-social">

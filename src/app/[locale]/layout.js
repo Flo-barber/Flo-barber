@@ -4,6 +4,7 @@ import Navbar from "@/components/organisms/Navbar";
 import Footer from "@/components/organisms/Footer";
 import ServiceWorker from "@/components/ServiceWorker";
 import LanguageSwitcher from "@/components/molecules/LanguageSwitcher";
+import CookieNotice from "@/components/molecules/CookieNotice";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { getDictionary, getT } from "@/i18n/dictionaries";
 import { locales } from "@/i18n/config";
@@ -89,6 +90,7 @@ export default async function RootLayout({ children, params }) {
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <CookieNotice />
           <ServiceWorker />
         </I18nProvider>
       </body>

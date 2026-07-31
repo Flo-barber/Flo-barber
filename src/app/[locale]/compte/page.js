@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LoyaltyCard from "@/components/molecules/LoyaltyCard";
+import ProfileForm from "@/components/molecules/ProfileForm";
+import DeleteAccountButton from "@/components/molecules/DeleteAccountButton";
 import LogoutButton from "@/components/atoms/LogoutButton";
 import { isConfigured as walletConfigured } from "@/lib/googleWallet";
 import { getT } from "@/i18n/dictionaries";
@@ -69,23 +71,12 @@ export default async function ComptePage({ params }) {
               <span className="points-note">{t("account.pointsNote")}</span>
             </div>
 
-            <div className="account-info">
-              <h2>{t("account.infoTitle")}</h2>
-              <ul>
-                <li>
-                  <span>{t("account.name")}</span>
-                  <strong>{profile?.full_name || "—"}</strong>
-                </li>
-                <li>
-                  <span>{t("account.email")}</span>
-                  <strong>{profile?.email || user.email}</strong>
-                </li>
-                <li>
-                  <span>{t("account.phone")}</span>
-                  <strong>{profile?.phone || "—"}</strong>
-                </li>
-              </ul>
-            </div>
+            <ProfileForm
+              userId={user.id}
+              initialName={profile?.full_name}
+              initialPhone={profile?.phone}
+              email={profile?.email || user.email}
+            />
 
             <div className="account-history">
               <h2>{t("account.historyTitle")}</h2>
@@ -103,6 +94,8 @@ export default async function ComptePage({ params }) {
                 <p className="account-empty">{t("account.historyEmpty")}</p>
               )}
             </div>
+
+            <DeleteAccountButton />
           </div>
 
           <aside className="account-side">

@@ -21,6 +21,7 @@ export default function ConnexionPage() {
   const [status, setStatus] = useState(null); // null | 'loading'
   const [error, setError] = useState(null);
   const [info, setInfo] = useState(null);
+  const [consent, setConsent] = useState(false);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -38,6 +39,13 @@ export default function ConnexionPage() {
     e.preventDefault();
     setError(null);
     setInfo(null);
+
+    // RGPD : consentement obligatoire à l'inscription.
+    if (mode === "signup" && !consent) {
+      setError(t("auth.consentRequired"));
+      return;
+    }
+
     setStatus("loading");
     const supabase = createClient();
 
@@ -47,7 +55,11 @@ export default function ConnexionPage() {
           email: form.email.trim(),
           password: form.password,
           options: {
-            data: { full_name: form.fullName.trim(), phone: form.phone.trim() },
+            data: {
+              full_name: form.fullName.trim(),
+              phone: form.phone.trim(),
+              consent_at: new Date().toISOString(),
+            },
           },
         });
         if (error) throw error;
@@ -131,6 +143,24 @@ export default function ConnexionPage() {
               autoComplete={mode === "login" ? "current-password" : "new-password"}
             />
           </label>
+
+          {mode === "signup" && (
+            <label className="auth-consent">
+              <input
+                type="checkbox"
+                required
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+              />
+              <span>
+                {t("auth.consentBefore")}
+                <Link href="/confidentialite" target="_blank">
+                  {t("auth.consentLink")}
+                </Link>
+                .
+              </span>
+            </label>
+          )}
 
           {error && <p className="auth-error">{error}</p>}
           {info && <p className="auth-info">{info}</p>}

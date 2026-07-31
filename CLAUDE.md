@@ -160,8 +160,17 @@ Mise en route fidélité détaillée dans `GUIDE-FIDELITE.md`.
 - **Secrets** : `flo-barber-wallet-*.json` (clé de service Google) et `.env.local` sont
   gitignorés — **ne jamais les commiter ni les partager**.
 - **`src/components/DevTester.js`** est un fichier mort → à supprimer.
-- **RGPD** : données perso (nom, email, tél, historique d'achats). Manquent encore une
-  politique de confidentialité, le consentement à l'inscription, la suppression de compte.
+- **RGPD / légal** : base en place — politique de confidentialité (`/confidentialite`),
+  mentions légales (`/mentions-legales`) et **CGV/CGU** (`/cgv`) rendues via l'organism
+  `LegalDoc` depuis `src/data/legal.js` (bilingue, **placeholders `[CROCHETS]` à compléter** :
+  société, SIRET, adresse, email, hébergeur, moyens de paiement, livraison, médiateur…),
+  consentement
+  obligatoire à l'inscription, bandeau cookies informatif (`molecules/CookieNotice`), et
+  **suppression de compte** (`molecules/DeleteAccountButton` → server action
+  `src/lib/accountActions.js` via clé de service). ⚠️ À faire relire par un juriste et
+  compléter les champs avant production.
+- **Clé de service Supabase** : `SUPABASE_SERVICE_ROLE_KEY` (env, secret serveur) requise
+  pour la suppression de compte. Client dédié `src/lib/supabase/admin.js` — jamais côté client.
 - **Google Wallet** : émetteur en *mode démo* tant que l'accès de publication n'est pas
   demandé. Le logo doit être un PNG public (pas `localhost`).
 - **Caméra scanner** : nécessite HTTPS (ou `localhost`) — bloquée en `http://192.168…`.

@@ -7,6 +7,9 @@ export default function sitemap() {
     { path: "", priority: 1 },
     { path: "/recherche", priority: 0.8 },
     { path: "/catalogue", priority: 0.5 },
+    { path: "/cgv", priority: 0.2 },
+    { path: "/confidentialite", priority: 0.2 },
+    { path: "/mentions-legales", priority: 0.2 },
   ];
 
   return locales.flatMap((locale) =>
