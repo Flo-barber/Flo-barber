@@ -151,6 +151,13 @@
     }
   }
 
+  &-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
   &-eyebrow {
     text-transform: uppercase;
     letter-spacing: 3px;

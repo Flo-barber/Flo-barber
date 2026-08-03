@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/server";
 import LoyaltyCard from "@/components/molecules/LoyaltyCard";
 import ProfileForm from "@/components/molecules/ProfileForm";
@@ -48,6 +49,14 @@ export default async function ComptePage({ params }) {
     .order("created_at", { ascending: false })
     .limit(20);
 
+  // Statut admin (RLS `admins_select_self` : chacun peut lire sa propre ligne).
+  const { data: adminRow } = await supabase
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const isAdmin = !!adminRow;
+
   const points = profile?.points ?? 0;
 
   return (
@@ -60,7 +69,14 @@ export default async function ComptePage({ params }) {
               {t("account.hello")} {profile?.full_name || ""}
             </h1>
           </div>
-          <LogoutButton />
+          <div className="account-actions">
+            {isAdmin && (
+              <Link href="/admin" className="btn btn-outline">
+                {t("account.adminSection")}
+              </Link>
+            )}
+            <LogoutButton />
+          </div>
         </div>
 
         <div className="account-grid">

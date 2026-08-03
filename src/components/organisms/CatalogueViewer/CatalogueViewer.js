@@ -10,6 +10,7 @@ import {
 import Link from "@/i18n/Link";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import catalogue from "@/data/catalogue.json";
+import { formatEuro } from "@/lib/format";
 import "./CatalogueViewer.scss";
 
 // Layout effect côté client (évite l'avertissement SSR), pour lancer les
@@ -27,15 +28,13 @@ const PHOTO_PEEK_H = 28; // aperçu horizontal (mobile) — plus petit = photo c
 const PHOTO_GAP = 14;
 const PHOTO_OFFSETS = [-2, -1, 0, 1, 2];
 
-export default function CatalogueViewer() {
+export default function CatalogueViewer({ products = {} }) {
   const { locale } = useI18n();
   const t = useT();
 
   const cuts = catalogue.cuts;
   const n = cuts.length;
-  const productsBySlug = Object.fromEntries(
-    catalogue.products.map((p) => [p.slug, p])
-  );
+  const productsBySlug = products || {};
 
   const [active, setActive] = useState(0);
   const [photo, setPhoto] = useState(0);
@@ -444,7 +443,9 @@ export default function CatalogueViewer() {
                       <span className="cv-product-name">{p.name[locale]}</span>
                       <span className="cv-product-tag">{p.tagline[locale]}</span>
                     </span>
-                    <span className="cv-product-price">{p.price}</span>
+                    <span className="cv-product-price">
+                      {formatEuro(p.priceCents, locale)}
+                    </span>
                   </Link>
                 </li>
               );

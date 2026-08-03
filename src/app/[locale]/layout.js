@@ -6,15 +6,20 @@ import ServiceWorker from "@/components/ServiceWorker";
 import LanguageSwitcher from "@/components/molecules/LanguageSwitcher";
 import CookieNotice from "@/components/molecules/CookieNotice";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { CartProvider } from "@/cart/CartProvider";
 import { getDictionary, getT } from "@/i18n/dictionaries";
 import { locales } from "@/i18n/config";
 
 // DA « béton / métal » : gothique moderne LISIBLE (Grenze Gotisch) en graisse légère
 // pour la marque et les grands titres ; condensée (Oswald) pour sur-titres / boutons.
+// preload:false → pas de <link rel=preload> (les polices sont appliquées via
+// variables CSS, donc Next ne peut pas garantir leur usage immédiat ; évite
+// l'avertissement « preloaded but not used »). display:swap gère l'affichage.
 const gothic = Grenze_Gotisch({
   weight: ["400", "500", "600"],
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-gothic",
 });
 
@@ -22,6 +27,7 @@ const condensed = Oswald({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-condensed",
 });
 
@@ -86,12 +92,14 @@ export default async function RootLayout({ children, params }) {
     <html lang={locale} className={`${gothic.variable} ${condensed.variable}`}>
       <body>
         <I18nProvider locale={locale} dict={dict}>
-          <LanguageSwitcher />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <CookieNotice />
-          <ServiceWorker />
+          <CartProvider>
+            <LanguageSwitcher />
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <CookieNotice />
+            <ServiceWorker />
+          </CartProvider>
         </I18nProvider>
       </body>
     </html>

@@ -19,6 +19,7 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 - **Google Wallet** (`google-auth-library` + `jsonwebtoken`) : carte de fidélité mobile.
 - **Leaflet / react-leaflet** + géocodage **Nominatim** (OpenStreetMap, sans clé API).
 - **QR** : `qrcode.react` (génération), `html5-qrcode` (scan caméra admin).
+- **Paiement** : `stripe` (Checkout hébergé, expédition) + webhook → commandes + points.
 - **SCSS** (`sass`). Alias d'import : `@/*` → `src/*` (voir `jsconfig.json`).
 - Réservation de RDV **déléguée à Planity** (lien par salon, pas de moteur interne).
 - PWA : `manifest.js`, `public/sw.js`, `ServiceWorker.js`.
@@ -33,8 +34,29 @@ Google Wallet) avec un **espace admin** pour créditer les points.
   3 coupes au-dessus/3 en dessous ; molette/glisser/flèches ; animation via WAAPI). La photo
   centrale et la description découlent d'`active` (alignement garanti). Galerie multi-photos
   (thumbs + prev/next). Données mock bilingues dans `src/data/catalogue.json`.
-- `/boutique/[slug]` — **STUB** de fiche produit (placeholder « bientôt »). La vraie boutique
-  (panier, paiement, stock) reste à construire ; la route + les données mock préparent le terrain.
+- `/boutique` — **vraie boutique** : liste produits + fiche `/boutique/[slug]` (AddToCart),
+  panier (`src/cart/CartProvider`, localStorage), page `/boutique/panier` (server → `CartView`
+  client) → **Stripe Checkout** (server action `src/lib/shopActions.js`, prix **revalidés côté
+  serveur** via `src/lib/products.js`, collecte d'adresse + frais de port `SHIPPING_CENTS`).
+  Le **webhook** `POST /api/webhooks/stripe` enregistre la commande (table `orders`), **crédite
+  les points** (1 € = 1 pt) et **décrémente le stock** (`rpc decrement_stock`) via la clé de service.
+  **Produits en base Supabase** (table `products` : nom/tagline bilingues, `price_cents`, `image`,
+  `stock` [null = illimité], `active`, `sort`). Édition sans code via l'**admin `/admin/produits`**
+  (RLS `is_admin`, upload image → bucket Storage `products`). `src/data/catalogue.json` ne garde que
+  les **coupes** (son tableau `products` sert de **seed** SQL). Pas de click & collect : **expédition uniquement**.
+  ⚠️ **Upload Storage — piège à connaître** : l'upload d'image doit se faire en **`upsert: false`**
+  (pas `true`). Avec `upsert: true`, Supabase émet un `INSERT ... ON CONFLICT DO UPDATE` qui fait
+  évaluer **en plus** la policy UPDATE côté Storage → l'`is_admin()` de cette policy y renvoyait
+  faux et **bloquait tout l'upload** (403 « new row violates RLS »). En INSERT pur (`upsert: false`),
+  seule la policy INSERT est évaluée et ça passe ; les noms de fichiers sont déjà uniques
+  (`slug-<timestamp>.<ext>`), donc `upsert` est inutile. Les **policies RLS Storage** sont keyées sur
+  `bucket_id = 'products'` **et** `is_admin()` (INSERT/UPDATE/DELETE), **sans** clause `to authenticated`
+  (même modèle que `products_write` de la table). Le **nom de bucket compte, casse comprise** :
+  `bucket_id` compare l'**`id`** du bucket (pas son affichage), et le code cible `products` (minuscule,
+  surchargeable via `NEXT_PUBLIC_STORAGE_BUCKET`). L'admin **supprime automatiquement l'ancienne image**
+  du bucket au remplacement (à l'enregistrement) et à la suppression d'un produit, via `storagePathFromUrl`
+  qui ne cible **que** les objets réellement uploadés (les chemins statiques du seed `/catalogue/products/…`
+  sont épargnés).
 
 **Espace client** `/compte` (protégé)
 - Auth Supabase via `/compte/connexion`.
@@ -159,7 +181,6 @@ Mise en route fidélité détaillée dans `GUIDE-FIDELITE.md`.
 
 - **Secrets** : `flo-barber-wallet-*.json` (clé de service Google) et `.env.local` sont
   gitignorés — **ne jamais les commiter ni les partager**.
-- **`src/components/DevTester.js`** est un fichier mort → à supprimer.
 - **RGPD / légal** : base en place — politique de confidentialité (`/confidentialite`),
   mentions légales (`/mentions-legales`) et **CGV/CGU** (`/cgv`) rendues via l'organism
   `LegalDoc` depuis `src/data/legal.js` (bilingue, **placeholders `[CROCHETS]` à compléter** :

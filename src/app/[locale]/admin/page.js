@@ -28,6 +28,9 @@ export default async function AdminPage({ params }) {
             <Link href="/admin/scanner" className="btn btn-primary">
               {t("admin.scanClient")}
             </Link>
+            <Link href="/admin/produits" className="btn btn-outline">
+              {t("admin.products")}
+            </Link>
             <LogoutButton />
           </div>
         </div>

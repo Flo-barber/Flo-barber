@@ -1,63 +1,63 @@
 import Link from "@/i18n/Link";
-import catalogue from "@/data/catalogue.json";
+import { getProduct } from "@/lib/products";
+import { formatEuro } from "@/lib/format";
 import { getT } from "@/i18n/dictionaries";
-import { locales } from "@/i18n/config";
+import AddToCart from "@/components/molecules/AddToCart";
 
-// STUB : fiche produit placeholder. La vraie boutique (panier, paiement, stock…)
-// reste à construire — ici on prépare seulement le terrain (route + données mock).
-export function generateStaticParams() {
-  return locales.flatMap((locale) =>
-    catalogue.products.map((p) => ({ locale, slug: p.slug }))
-  );
-}
-
-function getProduct(slug) {
-  return catalogue.products.find((p) => p.slug === slug) || null;
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { locale, slug } = await params;
   const t = getT(locale);
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   return {
-    title: product ? product.name[locale] : t("boutique.notFound"),
-    robots: { index: false, follow: true },
+    title: product ? product.name[locale] : t("shop.notFound"),
+    alternates: { canonical: `/${locale}/boutique/${slug}` },
   };
 }
 
 export default async function ProductPage({ params }) {
   const { locale, slug } = await params;
   const t = getT(locale);
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
 
-  if (!product) {
+  if (!product || product.active === false) {
     return (
       <section className="section">
-        <div className="container boutique-stub">
-          <p>{t("boutique.notFound")}</p>
-          <Link href="/catalogue" className="btn btn-outline">
-            {t("boutique.backCatalogue")}
+        <div className="container product">
+          <p>{t("shop.notFound")}</p>
+          <Link href="/boutique" className="btn btn-outline">
+            {t("shop.backToShop")}
           </Link>
         </div>
       </section>
     );
   }
 
+  const out = product.stock != null && product.stock <= 0;
+
   return (
     <section className="section">
-      <div className="container boutique-stub">
-        <div className="boutique-stub-media">
+      <div className="container product">
+        <div className="product-media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={product.image} alt={product.name[locale]} />
         </div>
-        <div className="boutique-stub-body">
-          <span className="boutique-stub-badge">{t("boutique.soonBadge")}</span>
-          <h1 className="boutique-stub-name">{product.name[locale]}</h1>
-          <p className="boutique-stub-tag">{product.tagline[locale]}</p>
-          <p className="boutique-stub-price gold-text">{product.price}</p>
-          <p className="boutique-stub-soon">{t("boutique.soonText")}</p>
-          <Link href="/catalogue" className="btn btn-outline">
-            {t("boutique.backCatalogue")}
+        <div className="product-body">
+          <p className="product-eyebrow gold-text">{t("shop.eyebrow")}</p>
+          <h1 className="product-name">{product.name[locale]}</h1>
+          <p className="product-tag">{product.tagline[locale]}</p>
+          <p className="product-price gold-text">
+            {formatEuro(product.priceCents, locale)}
+          </p>
+          <p className="product-shipping">{t("shop.shippingNote")}</p>
+          {out ? (
+            <p className="shop-out">{t("shop.outOfStock")}</p>
+          ) : (
+            <AddToCart slug={product.slug} />
+          )}
+          <Link href="/boutique" className="product-back">
+            {t("shop.backToShop")}
           </Link>
         </div>
       </div>
