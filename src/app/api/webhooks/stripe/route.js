@@ -1,9 +1,24 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { updatePoints } from "@/lib/googleWallet";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Synchronise le solde de points sur la carte Google Wallet du client (best-effort).
+async function syncWallet(admin, userId) {
+  try {
+    const { data: prof } = await admin
+      .from("profiles")
+      .select("points")
+      .eq("id", userId)
+      .single();
+    await updatePoints(userId, prof?.points ?? 0);
+  } catch {
+    // Ne bloque jamais si le Wallet n'est pas configuré / carte non ajoutée.
+  }
+}
 
 // Webhook Stripe : à la commande payée, on enregistre la commande et on crédite
 // les points de fidélité (1 € = 1 point) si le client a un compte.
@@ -30,9 +45,28 @@ export async function POST(req) {
     );
   }
 
+  const admin = createAdminClient();
+
+  // Paiement abandonné/expiré : on libère les points réservés (hold).
+  if (event.type === "checkout.session.expired") {
+    if (admin) {
+      const sid = event.data.object.id;
+      const { error } = await admin.rpc("release_redemption", { p_session: sid });
+      if (error)
+        console.error("[stripe webhook] libération points KO :", error.message);
+      // Resynchronise la carte Wallet du client concerné.
+      const { data: red } = await admin
+        .from("redemptions")
+        .select("user_id")
+        .eq("stripe_session_id", sid)
+        .maybeSingle();
+      if (red?.user_id) await syncWallet(admin, red.user_id);
+    }
+    return NextResponse.json({ received: true });
+  }
+
   if (event.type === "checkout.session.completed") {
     const s = event.data.object;
-    const admin = createAdminClient();
     if (!admin) {
       console.error(
         "[stripe webhook] SUPABASE_SERVICE_ROLE_KEY manquante → commande et points NON enregistrés."
@@ -40,8 +74,10 @@ export async function POST(req) {
       return NextResponse.json({ received: true });
     }
 
-    const amount = (s.amount_total || 0) / 100;
+    const amount = (s.amount_total || 0) / 100; // montant réellement payé (après remise)
     const userId = s.metadata?.userId || null;
+    const pointsUsed = parseInt(s.metadata?.pointsUsed || "0", 10) || 0;
+    const discountCents = parseInt(s.metadata?.discountCents || "0", 10) || 0;
     let items = [];
     try {
       items = JSON.parse(s.metadata?.items || "[]");
@@ -59,9 +95,20 @@ export async function POST(req) {
       shipping: s.shipping_details || s.customer_details?.address || null,
       stripe_session_id: s.id,
       status: "paid",
+      points_used: pointsUsed,
+      discount_cents: discountCents,
     });
     if (orderErr)
       console.error("[stripe webhook] insertion commande KO :", orderErr.message);
+
+    // Confirme la réservation de points (les points ont déjà été déduits au hold).
+    if (pointsUsed > 0) {
+      const { error: cfmErr } = await admin.rpc("confirm_redemption", {
+        p_session: s.id,
+      });
+      if (cfmErr)
+        console.error("[stripe webhook] confirmation points KO :", cfmErr.message);
+    }
 
     // Décrémente le stock des produits achetés (atomique, ignore ceux à stock null).
     for (const it of items) {
@@ -78,7 +125,8 @@ export async function POST(req) {
         );
     }
 
-    // Points de fidélité pour les clients connectés (bypass RLS via service role).
+    // Gain de points pour les clients connectés : 1 € payé = 1 point (bypass RLS
+    // via la clé de service). Basé sur le montant réellement payé (après remise).
     if (userId) {
       const points = Math.floor(amount);
       if (points > 0) {
@@ -92,6 +140,10 @@ export async function POST(req) {
           console.error("[stripe webhook] crédit points KO :", txErr.message);
       }
     }
+
+    // Resynchronise la carte Google Wallet avec le solde final (déduction éventuelle
+    // + gain). Best-effort : n'affecte pas l'enregistrement de la commande.
+    if (userId) await syncWallet(admin, userId);
   }
 
   return NextResponse.json({ received: true });

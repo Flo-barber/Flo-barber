@@ -210,3 +210,137 @@ on conflict (slug) do nothing;
 --
 --     insert into public.admins (user_id) values ('COLLE_ICI_UUID');
 -- =============================================================
+
+-- =============================================================
+--  FIDÉLITÉ — Valeur des points & utilisation (remises)
+-- -------------------------------------------------------------
+--  Règles : 1 € dépensé = 1 Flo Point (gain, inchangé).
+--           1 Flo Point = 0,05 € de valeur (remise).
+--           Utilisation à partir de 100 points (tout ou partie).
+--  Bloc idempotent : peut être ré-exécuté sans risque.
+-- =============================================================
+
+-- Type de mouvement de points : 'credit' (achat/salon), 'redeem' (utilisation),
+-- 'refund' (remboursement d'un hold non payé).
+alter table public.transactions
+  add column if not exists kind text not null default 'credit';
+
+-- Garde-fou : le solde de points ne peut JAMAIS devenir négatif (protège les
+-- utilisations de points contre tout dépassement, même en cas de bug applicatif).
+create or replace function public.add_points()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  new_total integer;
+begin
+  update public.profiles
+  set points = points + new.points
+  where id = new.client_id
+  returning points into new_total;
+
+  if new_total < 0 then
+    raise exception 'Solde de points insuffisant (client %, delta %)',
+      new.client_id, new.points using errcode = 'check_violation';
+  end if;
+  return new;
+end;
+$$;
+
+-- Remise appliquée sur les commandes boutique.
+alter table public.orders
+  add column if not exists points_used integer not null default 0;
+alter table public.orders
+  add column if not exists discount_cents integer not null default 0;
+
+-- Réservations de points (holds) liées à une session Stripe.
+--  held      : points déduits, en attente de paiement
+--  confirmed : paiement validé (points consommés)
+--  released  : paiement abandonné/expiré (points rendus au client)
+create table if not exists public.redemptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  points integer not null check (points > 0),
+  cents integer not null check (cents >= 0),
+  stripe_session_id text unique,
+  status text not null default 'held' check (status in ('held', 'confirmed', 'released')),
+  created_at timestamptz not null default now()
+);
+create index if not exists redemptions_user_id_idx on public.redemptions (user_id);
+
+alter table public.redemptions enable row level security;
+-- Lecture par le client concerné ou l'admin. AUCUNE écriture côté client :
+-- tout passe par les RPC SECURITY DEFINER ci-dessous (ou la clé de service).
+drop policy if exists redemptions_select on public.redemptions;
+create policy redemptions_select on public.redemptions
+  for select using (user_id = auth.uid() or public.is_admin());
+
+-- RÉSERVE des points pour la session de paiement courante (appelé par le client
+-- connecté au moment de créer le paiement). Atomique : verrou de ligne + vérif du
+-- solde, ce qui empêche toute double-dépense (les points quittent le solde tout de
+-- suite). Refuse si < 100 points ou solde insuffisant.
+create or replace function public.hold_points(p_points integer, p_cents integer, p_session text)
+returns boolean
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  uid uuid := auth.uid();
+  bal integer;
+begin
+  if uid is null then return false; end if;
+  if p_points is null or p_points < 100 then return false; end if;
+  if p_cents is null or p_cents < 0 then return false; end if;
+
+  select points into bal from public.profiles where id = uid for update;
+  if bal is null or bal < p_points then return false; end if;
+
+  insert into public.redemptions (user_id, points, cents, stripe_session_id, status)
+  values (uid, p_points, p_cents, p_session, 'held');
+
+  -- Débit immédiat via une transaction négative (le trigger met à jour le solde).
+  insert into public.transactions (client_id, amount_eur, points, created_by, kind)
+  values (uid, 0, -p_points, uid, 'redeem');
+
+  return true;
+end;
+$$;
+
+-- CONFIRME un hold après paiement réussi (points déjà déduits au hold).
+-- Idempotent (n'agit que sur un hold encore 'held').
+create or replace function public.confirm_redemption(p_session text)
+returns void
+language sql
+security definer set search_path = public
+as $$
+  update public.redemptions set status = 'confirmed'
+  where stripe_session_id = p_session and status = 'held';
+$$;
+
+-- LIBÈRE un hold (paiement abandonné/expiré) : rend les points au client.
+-- Idempotent (n'agit que sur un hold encore 'held').
+create or replace function public.release_redemption(p_session text)
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  r public.redemptions%rowtype;
+begin
+  select * into r from public.redemptions
+  where stripe_session_id = p_session and status = 'held'
+  for update;
+  if not found then return; end if;
+
+  update public.redemptions set status = 'released' where id = r.id;
+
+  -- Crédit compensatoire (le trigger remet les points sur le solde).
+  insert into public.transactions (client_id, amount_eur, points, created_by, kind)
+  values (r.user_id, 0, r.points, r.user_id, 'refund');
+end;
+$$;
+
+-- Autorise l'appel des RPC de hold par les clients connectés (les fonctions sont
+-- SECURITY DEFINER : la vérification d'identité se fait via auth.uid() à l'intérieur).
+grant execute on function public.hold_points(integer, integer, text) to authenticated;

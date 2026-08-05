@@ -6,6 +6,7 @@ import ProfileForm from "@/components/molecules/ProfileForm";
 import DeleteAccountButton from "@/components/molecules/DeleteAccountButton";
 import LogoutButton from "@/components/atoms/LogoutButton";
 import { isConfigured as walletConfigured } from "@/lib/googleWallet";
+import { formatEuro, pointsToCents } from "@/lib/format";
 import { getT } from "@/i18n/dictionaries";
 
 export async function generateMetadata({ params }) {
@@ -84,6 +85,11 @@ export default async function ComptePage({ params }) {
             <div className="points-box">
               <span className="points-label">{t("account.pointsLabel")}</span>
               <span className="points-value gold-text">{points}</span>
+              <span className="points-euros">
+                {t("account.pointsValue", {
+                  value: formatEuro(pointsToCents(points), locale),
+                })}
+              </span>
               <span className="points-note">{t("account.pointsNote")}</span>
             </div>
 

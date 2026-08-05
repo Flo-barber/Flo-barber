@@ -257,6 +257,13 @@
     line-height: 1;
   }
 
+  .points-euros {
+    font-family: $font-condensed;
+    font-size: 1.15rem;
+    color: $metal-light;
+    margin-top: 4px;
+  }
+
   .points-note {
     font-size: 0.82rem;
     color: $text-muted;

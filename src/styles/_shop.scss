@@ -280,6 +280,69 @@
     line-height: 1.4;
   }
 
+  &-discount {
+    color: $metal-light;
+
+    strong {
+      color: $metal-light;
+    }
+  }
+
+  &-points {
+    border-top: 1px solid $border;
+    margin-top: 6px;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+
+    &-balance {
+      color: $text-muted;
+      margin: 0;
+    }
+
+    &-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: $text;
+      cursor: pointer;
+    }
+
+    &-field {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+
+      input {
+        width: 110px;
+        padding: 7px 9px;
+        background: $black;
+        border: 1px solid $border;
+        border-radius: 6px;
+        color: $text;
+      }
+    }
+
+    &-max {
+      background: none;
+      border: 1px solid $border;
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: $metal-light;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    &-help {
+      color: $text-muted;
+      font-size: 0.78rem;
+      flex-basis: 100%;
+    }
+  }
+
   &-pay {
     width: 100%;
     justify-content: center;

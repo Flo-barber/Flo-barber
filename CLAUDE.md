@@ -62,10 +62,30 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 - Auth Supabase via `/compte/connexion`.
 - Carte de fidélité `LoyaltyCard` : QR = **uniquement l'`id` du client**, solde de points,
   bouton « Ajouter à Google Wallet » (`AddToGoogleWallet` → server action `getWalletSaveUrl`).
+- **Valeur des points affichée en euros** (`account.pointsValue`), et bouton **« Espace admin »**
+  visible seulement si le compte est admin (vérif serveur via table `admins`).
+
+**Programme de fidélité « Flo Points » (règles)**
+- **Gain** : 1 € dépensé = 1 Flo Point (boutique via webhook sur `amount_total` payé ; salon via
+  `creditPoints`, `Math.floor`).
+- **Valeur** : 1 Flo Point = **0,05 €** (`POINT_VALUE_CENTS` dans `src/lib/format.js`). Helpers
+  `pointsToCents`, `maxRedeemablePoints`.
+- **Utilisation** : à partir de **100 points** (`POINT_MIN_REDEEM`), tout ou partie (montant libre).
+  - **En ligne (boutique)** : le client choisit ses points dans le **panier** (`CartView`) AVANT le
+    paiement ; la remise est **recalculée et appliquée côté serveur** dans `createCheckoutSession`
+    (jamais le client). Remise = coupon Stripe `amount_off` ; la **livraison est un line item** (pour
+    que la remise couvre le total) ; plafond : laisser ≥ 0,50 € payable (`STRIPE_MIN_CENTS`).
+    Anti-double-dépense : les points sont **réservés atomiquement** au moment de créer le paiement
+    (`rpc hold_points` → débit immédiat + ligne `redemptions` `held`). Le webhook **confirme**
+    (`confirm_redemption`) sur `checkout.session.completed` et **libère/rembourse**
+    (`release_redemption`) sur `checkout.session.expired` (⚠️ activer cet event côté Stripe ; session
+    à expiration courte de 30 min).
+  - **En salon (prestations)** : l'admin déduit les points via `redeemPointsAdmin` (scanner, mode
+    « Utiliser des points ») → transaction négative `kind = 'redeem'`.
 
 **Espace admin / salon** `/admin` (protégé)
-- Liste clients + `/admin/scanner` (caméra `QrScanner`) → crédite les points.
-- Crédit via server action `creditPoints` : **1 € = 1 point** (`Math.floor`).
+- Liste clients + `/admin/scanner` (caméra `QrScanner`) : **deux modes** — *créditer* un achat
+  (`creditPoints`, 1 € = 1 pt) ou *utiliser des points* (`redeemPointsAdmin`, min 100).
 
 ## 4. Architecture & conventions Next.js (règles en place — à respecter)
 
@@ -106,12 +126,19 @@ La sécurité vit **dans la base**, pas dans l'UI (voir `supabase/schema.sql`) :
 - **RLS** stricte : un client ne voit que ses propres données.
 - **Seul un admin** (table `admins`) peut créditer des points — garanti par la policy
   `transactions_insert` avec `check (is_admin())`, pas seulement l'interface.
-- Les **points** ne sont modifiables que par le trigger `add_points` (`SECURITY DEFINER`).
+- Les **points** ne sont modifiables que par le trigger `add_points` (`SECURITY DEFINER`),
+  qui **interdit tout solde négatif** (garde-fou : `raise exception` si le solde passerait < 0).
   Côté client : `revoke update` puis `grant update (full_name, phone)` uniquement.
 - Le **QR client ne contient que l'identifiant** — il ne permet jamais de créditer.
+- **Utilisation de points (remise)** : jamais pilotée par le client. La déduction passe
+  **uniquement** par des fonctions `SECURITY DEFINER` : `hold_points` (réservation atomique au
+  checkout, avec verrou de ligne + vérif du solde → aucune double-dépense possible),
+  `confirm_redemption` / `release_redemption` (appelées par le webhook via la clé de service).
+  Le montant de la remise est **recalculé côté serveur** (`createCheckoutSession`), jamais transmis
+  par le client. Table `redemptions` (RLS lecture only) pour le suivi des holds.
 
 Toute nouvelle fonctionnalité touchant aux points/comptes doit reproduire ce modèle
-(vérif serveur + policy RLS), jamais se reposer sur un contrôle front.
+(vérif serveur + policy RLS + fonction SECURITY DEFINER), jamais se reposer sur un contrôle front.
 
 ## 6. Convention de style — CIBLE : atomic design + 1 SCSS par composant
 

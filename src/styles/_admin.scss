@@ -334,6 +334,32 @@
   color: $text-muted;
 }
 
+.scanner-modes {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  button {
+    flex: 1;
+    padding: 9px 12px;
+    background: $black;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text-muted;
+    font-family: $font-condensed;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+
+    &.is-active {
+      border-color: $metal;
+      color: $text;
+    }
+  }
+}
+
 .scanner-actions {
   display: flex;
   gap: 12px;
