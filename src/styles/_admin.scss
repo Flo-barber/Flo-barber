@@ -128,6 +128,155 @@
   &:hover {
     text-decoration: underline;
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+    text-decoration: none;
+  }
+}
+
+// État « chargement » d'un bouton : on GARDE le libellé (donc la taille du
+// bouton), rendu transparent, et on superpose un spinner centré.
+.btn.is-loading,
+.ap-delete.is-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: btn-spin 0.7s linear infinite;
+  }
+}
+
+// Sur le bouton de suppression (texte clair), spinner teinté en conséquence.
+.ap-delete.is-loading::after {
+  border-color: rgba(224, 138, 138, 0.4);
+  border-top-color: #e08a8a;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// --- Admin coupes : galerie multi-photos + produits liés ---
+.ac-gallery {
+  margin-top: 14px;
+}
+
+.ac-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ac-thumb {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid $border;
+  background: $black;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &-empty {
+    display: inline-block;
+  }
+
+  &-actions {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 2px;
+
+    button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 2px 5px;
+
+      &:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+    }
+  }
+
+  &-del {
+    color: #ffb4b4 !important;
+  }
+}
+
+.ac-products {
+  margin-top: 14px;
+}
+
+.ap-field-label {
+  display: block;
+  font-size: 0.8rem;
+  color: $text-muted;
+  margin-bottom: 6px;
+}
+
+.ac-products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.ac-product {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: $text;
+  cursor: pointer;
+}
+
+.ac-products-empty {
+  color: $text-muted;
+  font-size: 0.85rem;
+}
+
+// Textareas des descriptions : même style que les inputs .ap-field.
+.ap-field textarea {
+  padding: 9px 11px;
+  background: $black;
+  border: 1px solid $border;
+  border-radius: 6px;
+  color: $text;
+  font: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+
+  &:focus {
+    border-color: $metal;
+  }
 }
 
 .admin-eyebrow {

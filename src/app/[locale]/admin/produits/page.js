@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/client";
+import Toast from "@/components/molecules/Toast";
 import { useT } from "@/i18n/I18nProvider";
 
 const EMPTY = {
@@ -78,6 +79,16 @@ function storagePathFromUrl(url) {
   return decodeURIComponent(url.slice(i + marker.length));
 }
 
+// Génère un slug à partir d'un texte (nom) : minuscules, sans accents ni espaces.
+function slugify(s) {
+  return (s || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 // Champs d'édition d'un produit. Défini AU NIVEAU MODULE (et non dans le
 // composant parent) : sinon React le recrée à chaque render, ce qui démonte /
 // remonte le sous-arbre et réinitialise l'<input type="file"> (le libellé
@@ -130,8 +141,9 @@ export default function AdminProductsPage() {
   const supabase = createClient();
   const [rows, setRows] = useState([]);
   const [draft, setDraft] = useState(EMPTY);
-  const [msg, setMsg] = useState(null);
-  const [err, setErr] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [busy, setBusy] = useState(null); // clé de l'action en cours
+  const notify = (type, message) => setToast({ type, message });
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -150,40 +162,38 @@ export default function AdminProductsPage() {
   }
 
   async function upload(file, slug, apply) {
-    setErr(null);
-    setMsg(null);
     const ext = (file.name.split(".").pop() || "").toLowerCase();
     const allowed = ["jpg", "jpeg", "png", "webp", "gif", "avif"];
     // HEIC/HEIF (photos iPhone) ne s'affichent pas dans un navigateur → on refuse.
     if (!allowed.includes(ext) || !(file.type || "").startsWith("image/")) {
-      setErr(t("adminProducts.imageType"));
+      notify("error", t("adminProducts.imageType"));
       return;
     }
-    // Le fichier stocké reprend le nom de l'image (nettoyé) + suffixe unique.
-    const path = `${slugifyFileName(file.name)}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage
-      .from(BUCKET)
-      .upload(path, file, {
+    setBusy(`upload:${slug || "new"}`);
+    try {
+      // Le fichier stocké reprend le nom de l'image (nettoyé) + suffixe unique.
+      const path = `${slugifyFileName(file.name)}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
         upsert: false,
         contentType: file.type || undefined,
         cacheControl: "3600",
       });
-    if (error) {
-      setErr(`${t("adminProducts.uploadError")} (${error.message})`);
-      return;
+      if (error) {
+        notify("error", `${t("adminProducts.uploadError")} (${error.message})`);
+        return;
+      }
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      apply(data.publicUrl);
+      notify("success", t("adminProducts.imageUploaded"));
+    } finally {
+      setBusy(null);
     }
-    const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-    apply(data.publicUrl);
-    setMsg(t("adminProducts.imageUploaded"));
   }
 
-  async function save(row) {
-    setMsg(null);
-    setErr(null);
+  async function save(row, key = "save") {
     // Tous les champs sont obligatoires (prix > 0, stock renseigné, image présente).
     const priceNum = parseFloat(String(row.priceEuros).replace(",", "."));
     if (
-      !row.slug.trim() ||
       !row.name_fr.trim() ||
       !row.name_en.trim() ||
       !row.tagline_fr.trim() ||
@@ -192,47 +202,72 @@ export default function AdminProductsPage() {
       String(row.stock).trim() === "" ||
       !row.image.trim()
     ) {
-      setErr(t("adminProducts.required"));
-      return;
+      notify("error", t("adminProducts.required"));
+      return false;
     }
-    // Image actuellement enregistrée en base (pour la supprimer si elle change).
-    const { data: existing } = await supabase
-      .from("products")
-      .select("image")
-      .eq("slug", row.slug.trim())
-      .maybeSingle();
+    setBusy(key);
+    try {
+      // Image actuellement enregistrée en base (pour la supprimer si elle change).
+      const { data: existing } = await supabase
+        .from("products")
+        .select("image")
+        .eq("slug", row.slug.trim())
+        .maybeSingle();
 
-    const next = toDb(row);
-    const { error } = await supabase
-      .from("products")
-      .upsert(next, { onConflict: "slug" });
-    if (error) {
-      setErr(error.message);
-      return;
+      const next = toDb(row);
+      const { error } = await supabase
+        .from("products")
+        .upsert(next, { onConflict: "slug" });
+      if (error) {
+        notify("error", error.message);
+        return false;
+      }
+      // Nettoyage : si l'image a changé, retirer l'ancienne du bucket
+      // (seulement si c'était bien un fichier uploadé, pas un chemin statique).
+      const oldPath = storagePathFromUrl(existing?.image);
+      if (oldPath && existing.image !== next.image) {
+        await supabase.storage.from(BUCKET).remove([oldPath]);
+      }
+      notify("success", t("adminProducts.saved"));
+      await load();
+      return true;
+    } finally {
+      setBusy(null);
     }
-    // Nettoyage : si l'image a changé, retirer l'ancienne du bucket
-    // (seulement si c'était bien un fichier uploadé, pas un chemin statique).
-    const oldPath = storagePathFromUrl(existing?.image);
-    if (oldPath && existing.image !== next.image) {
-      await supabase.storage.from(BUCKET).remove([oldPath]);
-    }
-    setMsg(t("adminProducts.saved"));
-    await load();
   }
 
   async function createProduct() {
-    await save(draft);
-    if (!err) setDraft(EMPTY);
+    // Slug généré automatiquement à partir du nom FR, avec unicité garantie.
+    const base = slugify(draft.name_fr) || "produit";
+    const taken = new Set(rows.map((r) => r.slug));
+    let slug = base;
+    let n = 2;
+    while (taken.has(slug)) slug = `${base}-${n++}`;
+
+    const ok = await save({ ...draft, slug }, "add");
+    if (ok) setDraft(EMPTY);
   }
 
   async function remove(slug) {
-    if (!window.confirm(t("adminProducts.deleteConfirm"))) return;
-    const img = rows.find((r) => r.slug === slug)?.image;
-    await supabase.from("products").delete().eq("slug", slug);
-    // Supprimer aussi son image du bucket (si c'était un fichier uploadé).
-    const path = storagePathFromUrl(img);
-    if (path) await supabase.storage.from(BUCKET).remove([path]);
-    await load();
+    const prod = rows.find((r) => r.slug === slug);
+    const name = prod?.name_fr || slug;
+    if (!window.confirm(t("adminProducts.deleteConfirm", { name }))) return;
+    setBusy(`del:${slug}`);
+    try {
+      const img = prod?.image;
+      const { error } = await supabase.from("products").delete().eq("slug", slug);
+      if (error) {
+        notify("error", error.message);
+        return;
+      }
+      // Supprimer aussi son image du bucket (si c'était un fichier uploadé).
+      const path = storagePathFromUrl(img);
+      if (path) await supabase.storage.from(BUCKET).remove([path]);
+      notify("success", t("adminProducts.deleted"));
+      await load();
+    } finally {
+      setBusy(null);
+    }
   }
 
   return (
@@ -248,8 +283,11 @@ export default function AdminProductsPage() {
           </Link>
         </div>
 
-        {msg && <p className="auth-info">{msg}</p>}
-        {err && <p className="auth-error">{err}</p>}
+        <Toast
+          type={toast?.type}
+          message={toast?.message}
+          onClose={() => setToast(null)}
+        />
 
         <div className="admin-products">
           {/* Nouveau produit */}
@@ -257,14 +295,6 @@ export default function AdminProductsPage() {
             <div className="ap-card-head">
               <strong>{t("adminProducts.newProduct")}</strong>
             </div>
-            <label className="ap-field">
-              {t("adminProducts.slug")}
-              <input
-                value={draft.slug}
-                onChange={(e) => setDraft({ ...draft, slug: e.target.value })}
-                placeholder="pommade-mate"
-              />
-            </label>
             <ProductFields
               t={t}
               row={draft}
@@ -276,7 +306,12 @@ export default function AdminProductsPage() {
               }
             />
             <div className="ap-actions">
-              <button type="button" className="btn btn-primary" onClick={createProduct}>
+              <button
+                type="button"
+                className={`btn btn-primary ${busy === "add" ? "is-loading" : ""}`}
+                onClick={createProduct}
+                disabled={!!busy}
+              >
                 {t("adminProducts.add")}
               </button>
             </div>
@@ -301,10 +336,20 @@ export default function AdminProductsPage() {
                 onImage={(file) => upload(file, row.slug, (url) => setRow(i, "image", url))}
               />
               <div className="ap-actions">
-                <button type="button" className="btn btn-primary" onClick={() => save(row)}>
+                <button
+                  type="button"
+                  className={`btn btn-primary ${busy === `save:${row.slug}` ? "is-loading" : ""}`}
+                  onClick={() => save(row, `save:${row.slug}`)}
+                  disabled={!!busy}
+                >
                   {t("adminProducts.save")}
                 </button>
-                <button type="button" className="ap-delete" onClick={() => remove(row.slug)}>
+                <button
+                  type="button"
+                  className={`ap-delete ${busy === `del:${row.slug}` ? "is-loading" : ""}`}
+                  onClick={() => remove(row.slug)}
+                  disabled={!!busy}
+                >
                   {t("adminProducts.delete")}
                 </button>
               </div>

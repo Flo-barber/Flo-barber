@@ -33,7 +33,12 @@ Google Wallet) avec un **espace admin** pour créditer les points.
   (sans dépendance) pilotée par un unique index `active` (modulo → boucle sans fin, toujours
   3 coupes au-dessus/3 en dessous ; molette/glisser/flèches ; animation via WAAPI). La photo
   centrale et la description découlent d'`active` (alignement garanti). Galerie multi-photos
-  (thumbs + prev/next). Données mock bilingues dans `src/data/catalogue.json`.
+  (thumbs + prev/next). **Coupes en base Supabase** (table `cuts` : `title_fr/en`,
+  `description_fr/en`, `images` jsonb [galerie d'URLs], `products` jsonb [slugs liés],
+  `active`, `sort`) — lues via `src/lib/cuts.js` (`getCuts`, mappé vers la forme du viewer,
+  `alt` = titre). Édition sans code via l'**admin `/admin/coupes`** (upload images → bucket
+  `products` préfixe `cuts/`, sélection des produits liés). `src/data/catalogue.json` n'est
+  plus utilisé au runtime (conservé comme référence du seed).
 - `/boutique` — **vraie boutique** : liste produits + fiche `/boutique/[slug]` (AddToCart),
   panier (`src/cart/CartProvider`, localStorage), page `/boutique/panier` (server → `CartView`
   client) → **Stripe Checkout** (server action `src/lib/shopActions.js`, prix **revalidés côté

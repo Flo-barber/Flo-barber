@@ -1,6 +1,6 @@
 import { getT } from "@/i18n/dictionaries";
 import CatalogueViewer from "@/components/organisms/CatalogueViewer";
-import catalogue from "@/data/catalogue.json";
+import { getCuts } from "@/lib/cuts";
 import { getProductsBySlugs } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
@@ -19,8 +19,9 @@ export default async function CataloguePage({ params }) {
   const { locale } = await params;
   const t = getT(locale);
 
-  // Produits « utilisés » des coupes → chargés depuis la base pour le viewer.
-  const slugs = [...new Set(catalogue.cuts.flatMap((c) => c.products || []))];
+  // Coupes + produits « utilisés » → chargés depuis la base pour le viewer.
+  const cuts = await getCuts();
+  const slugs = [...new Set(cuts.flatMap((c) => c.products || []))];
   const products = await getProductsBySlugs(slugs);
 
   return (
@@ -35,7 +36,7 @@ export default async function CataloguePage({ params }) {
       </div>
 
       <div className="container">
-        <CatalogueViewer products={products} />
+        <CatalogueViewer cuts={cuts} products={products} />
       </div>
     </section>
   );

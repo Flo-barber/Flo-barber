@@ -31,6 +31,9 @@ export default async function AdminPage({ params }) {
             <Link href="/admin/produits" className="btn btn-outline">
               {t("admin.products")}
             </Link>
+            <Link href="/admin/coupes" className="btn btn-outline">
+              {t("admin.cuts")}
+            </Link>
             <LogoutButton />
           </div>
         </div>

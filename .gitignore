@@ -28,6 +28,9 @@ flo-barber-wallet-*.json
 *service-account*.json
 *-*.iam.gserviceaccount.com.json
 
+# document de livraison / passation client (NE PAS COMMITTER)
+/LIVRAISON-CLIENT.md
+
 # vercel
 .vercel
 

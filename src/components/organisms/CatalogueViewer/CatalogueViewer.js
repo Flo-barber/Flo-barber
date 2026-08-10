@@ -9,7 +9,6 @@ import {
 } from "react";
 import Link from "@/i18n/Link";
 import { useI18n, useT } from "@/i18n/I18nProvider";
-import catalogue from "@/data/catalogue.json";
 import { formatEuro } from "@/lib/format";
 import "./CatalogueViewer.scss";
 
@@ -28,11 +27,10 @@ const PHOTO_PEEK_H = 28; // aperçu horizontal (mobile) — plus petit = photo c
 const PHOTO_GAP = 14;
 const PHOTO_OFFSETS = [-2, -1, 0, 1, 2];
 
-export default function CatalogueViewer({ products = {} }) {
+export default function CatalogueViewer({ cuts = [], products = {} }) {
   const { locale } = useI18n();
   const t = useT();
 
-  const cuts = catalogue.cuts;
   const n = cuts.length;
   const productsBySlug = products || {};
 
@@ -62,7 +60,7 @@ export default function CatalogueViewer({ products = {} }) {
   const suppressAnimRef = useRef(false); // saute l'anim standard lors d'un commit de drag
 
   const cut = cuts[active];
-  const images = cut.images;
+  const images = cut?.images || [];
   const safePhoto = photo < images.length ? photo : 0;
 
   const mod = (x) => ((x % n) + n) % n;
@@ -303,6 +301,15 @@ export default function CatalogueViewer({ products = {} }) {
     onPointerLeave: onPointerUp,
     onPointerCancel: onPointerUp,
   };
+
+  // Aucune coupe active en base → message neutre (rien à afficher).
+  if (!n || !cut) {
+    return (
+      <div className="catalogue-viewer cv-empty">
+        <p>{t("catalogue.emptyText")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="catalogue-viewer">

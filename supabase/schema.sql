@@ -344,3 +344,66 @@ $$;
 -- Autorise l'appel des RPC de hold par les clients connectés (les fonctions sont
 -- SECURITY DEFINER : la vérification d'identité se fait via auth.uid() à l'intérieur).
 grant execute on function public.hold_points(integer, integer, text) to authenticated;
+
+-- =============================================================
+--  COUPES (catalogue) — éditées par l'admin, lues par tous
+-- -------------------------------------------------------------
+--  Coupes signature de la page /catalogue, reliées à des produits.
+--  images  : tableau JSON d'URLs (String[]) — galerie multi-photos.
+--  products: tableau JSON de slugs produits (référence public.products.slug).
+--  Bloc idempotent.
+-- =============================================================
+create table if not exists public.cuts (
+  slug text primary key,
+  title_fr text not null,
+  title_en text not null,
+  description_fr text,
+  description_en text,
+  images jsonb not null default '[]'::jsonb,
+  products jsonb not null default '[]'::jsonb,
+  active boolean not null default true,
+  sort integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.cuts enable row level security;
+
+-- Lecture : coupes actives visibles par tous ; l'admin voit aussi les inactives.
+drop policy if exists cuts_select on public.cuts;
+create policy cuts_select on public.cuts
+  for select using (active = true or public.is_admin());
+
+-- Écriture (création / édition / suppression) : réservée aux administrateurs.
+drop policy if exists cuts_write on public.cuts;
+create policy cuts_write on public.cuts
+  for all using (public.is_admin()) with check (public.is_admin());
+
+-- Seed des 5 coupes existantes (idempotent). Images = chemins statiques du projet.
+insert into public.cuts (slug, title_fr, title_en, description_fr, description_en, images, products, sort) values
+  ('fade-classique', 'Fade classique', 'Classic fade',
+   'Dégradé progressif sur les côtés et la nuque, longueur travaillée sur le dessus. Une coupe nette et intemporelle, adaptée à tous les styles.',
+   'Progressive taper on the sides and nape, worked length on top. A clean, timeless cut that suits every style.',
+   '["/catalogue/fade-classique-1.jpg","/catalogue/fade-classique-2.jpg","/catalogue/fade-classique-3.jpg"]'::jsonb,
+   '["pommade-mate","spray-texturisant"]'::jsonb, 1),
+  ('undercut', 'Undercut', 'Undercut',
+   'Contraste marqué entre des côtés très courts et un dessus long à coiffer en arrière. Un look affirmé, facile à styliser au quotidien.',
+   'Bold contrast between very short sides and a long top to slick back. A statement look, easy to style day to day.',
+   '["/catalogue/undercut-1.jpg","/catalogue/undercut-2.jpg"]'::jsonb,
+   '["cire-coiffante","huile-barbe"]'::jsonb, 2),
+  ('crop-francais', 'Crop français', 'French crop',
+   'Frange texturée portée vers l''avant, côtés dégradés. Un rendu mat et moderne qui demande peu d''entretien.',
+   'Textured fringe worn forward, tapered sides. A modern, matte finish that needs little upkeep.',
+   '["/catalogue/crop-francais-1.jpg","/catalogue/crop-francais-2.jpg"]'::jsonb,
+   '["pommade-mate"]'::jsonb, 3),
+  ('pompadour', 'Pompadour', 'Pompadour',
+   'Volume travaillé vers l''arrière et le haut, côtés courts. Un grand classique élégant qui met en valeur la matière.',
+   'Volume worked up and back, short sides. An elegant classic that showcases the hair''s texture.',
+   '["/catalogue/pompadour-1.jpg","/catalogue/pompadour-2.jpg","/catalogue/pompadour-3.jpg"]'::jsonb,
+   '["pommade-mate","cire-coiffante","spray-texturisant"]'::jsonb, 4),
+  ('buzz-cut', 'Buzz cut', 'Buzz cut',
+   'Coupe très courte et uniforme à la tondeuse. Minimaliste, sans entretien, idéale pour un style franc.',
+   'Very short, uniform clipper cut. Minimalist, zero-maintenance, ideal for a no-nonsense style.',
+   '["/catalogue/buzz-cut-1.jpg"]'::jsonb,
+   '["baume-apres-rasage"]'::jsonb, 5)
+on conflict (slug) do nothing;
