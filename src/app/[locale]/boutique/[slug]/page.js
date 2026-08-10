@@ -3,6 +3,7 @@ import { getProduct } from "@/lib/products";
 import { formatEuro } from "@/lib/format";
 import { getT } from "@/i18n/dictionaries";
 import AddToCart from "@/components/molecules/AddToCart";
+import ArrowLeft from "@/components/atoms/ArrowLeft";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function ProductPage({ params }) {
         <div className="container product">
           <p>{t("shop.notFound")}</p>
           <Link href="/boutique" className="btn btn-outline">
+            <ArrowLeft />
             {t("shop.backToShop")}
           </Link>
         </div>
@@ -57,6 +59,7 @@ export default async function ProductPage({ params }) {
             <AddToCart slug={product.slug} />
           )}
           <Link href="/boutique" className="product-back">
+            <ArrowLeft size={16} />
             {t("shop.backToShop")}
           </Link>
         </div>

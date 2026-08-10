@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/client";
 import Toast from "@/components/molecules/Toast";
+import ArrowLeft from "@/components/atoms/ArrowLeft";
 import { useT } from "@/i18n/I18nProvider";
 
 const EMPTY = {
@@ -279,6 +280,7 @@ export default function AdminProductsPage() {
             <h1>{t("adminProducts.title")}</h1>
           </div>
           <Link href="/admin" className="btn btn-outline">
+            <ArrowLeft />
             {t("scanner.back")}
           </Link>
         </div>

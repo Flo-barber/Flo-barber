@@ -226,7 +226,7 @@ export default function CartView({ products, points = 0, loggedIn = false }) {
                 <strong>{fmt(totalCents)}</strong>
               </div>
 
-              <p className="cart-note">{t("shop.pointsNote")}</p>
+              {!loggedIn && <p className="cart-note">{t("shop.pointsNote")}</p>}
               {err && <p className="auth-error">{err}</p>}
               <button
                 type="button"

@@ -7,6 +7,7 @@ import DeleteAccountButton from "@/components/molecules/DeleteAccountButton";
 import LogoutButton from "@/components/atoms/LogoutButton";
 import { isConfigured as walletConfigured } from "@/lib/googleWallet";
 import { formatEuro, pointsToCents } from "@/lib/format";
+import { getProductsBySlugs } from "@/lib/products";
 import { getT } from "@/i18n/dictionaries";
 
 export async function generateMetadata({ params }) {
@@ -49,6 +50,25 @@ export default async function ComptePage({ params }) {
     .eq("client_id", user.id)
     .order("created_at", { ascending: false })
     .limit(20);
+
+  const { data: orders } = await supabase
+    .from("orders")
+    .select("id, amount_eur, items, status, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  // Noms des produits commandés (pour le détail de chaque commande).
+  const orderSlugs = [
+    ...new Set(
+      (orders || []).flatMap((o) =>
+        Array.isArray(o.items) ? o.items.map((it) => it.slug) : []
+      )
+    ),
+  ];
+  const orderProducts = orderSlugs.length
+    ? await getProductsBySlugs(orderSlugs)
+    : {};
 
   // Statut admin (RLS `admins_select_self` : chacun peut lire sa propre ligne).
   const { data: adminRow } = await supabase
@@ -108,12 +128,90 @@ export default async function ComptePage({ params }) {
                     <li key={tx.id}>
                       <span>{formatDate(tx.created_at, locale)}</span>
                       <span>{Number(tx.amount_eur).toFixed(2)} €</span>
-                      <strong className="gold-text">+{tx.points} {t("account.pts")}</strong>
+                      <strong className="gold-text">
+                        {tx.points >= 0 ? "+" : ""}
+                        {tx.points} {t("account.pts")}
+                      </strong>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <p className="account-empty">{t("account.historyEmpty")}</p>
+              )}
+            </div>
+
+            <div className="account-orders" id="commandes">
+              <h2>{t("account.ordersTitle")}</h2>
+              {orders && orders.length > 0 ? (
+                <ul>
+                  {orders.map((o) => {
+                    const items = Array.isArray(o.items) ? o.items : [];
+                    const count = items.reduce(
+                      (s, it) => s + (parseInt(it.qty, 10) || 1),
+                      0
+                    );
+                    return (
+                      <li key={o.id}>
+                        <details className="account-order">
+                          <summary>
+                            <span>{formatDate(o.created_at, locale)}</span>
+                            <span>
+                              {count} {t("account.items")}
+                            </span>
+                            <strong>{Number(o.amount_eur).toFixed(2)} €</strong>
+                            <svg
+                              className="account-order-chevron"
+                              viewBox="0 0 24 24"
+                              width="14"
+                              height="14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </summary>
+                          <ul className="account-order-items">
+                            {items.length > 0 ? (
+                              items.map((it, k) => {
+                                const qty = parseInt(it.qty, 10) || 1;
+                                // Nom figé au moment de l'achat, sinon repli sur
+                                // le produit actuel, sinon l'identifiant.
+                                const snapName =
+                                  locale === "en" ? it.name_en : it.name_fr;
+                                const name =
+                                  snapName ||
+                                  orderProducts[it.slug]?.name?.[locale] ||
+                                  it.slug;
+                                const unit =
+                                  it.price_cents != null
+                                    ? it.price_cents
+                                    : orderProducts[it.slug]?.priceCents;
+                                return (
+                                  <li key={k}>
+                                    <span>
+                                      {qty} × {name}
+                                    </span>
+                                    {unit != null && (
+                                      <span>{formatEuro(unit, locale)}</span>
+                                    )}
+                                  </li>
+                                );
+                              })
+                            ) : (
+                              <li>—</li>
+                            )}
+                          </ul>
+                        </details>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="account-empty">{t("account.ordersEmpty")}</p>
               )}
             </div>
 

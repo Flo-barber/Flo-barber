@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/client";
 import Toast from "@/components/molecules/Toast";
+import ArrowLeft from "@/components/atoms/ArrowLeft";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 
 // Bucket Storage partagé avec les produits (mêmes policies RLS). Les images de
@@ -394,6 +395,7 @@ export default function AdminCutsPage() {
             <h1>{t("adminCuts.title")}</h1>
           </div>
           <Link href="/admin" className="btn btn-outline">
+            <ArrowLeft />
             {t("scanner.back")}
           </Link>
         </div>

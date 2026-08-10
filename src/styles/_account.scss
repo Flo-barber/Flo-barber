@@ -124,6 +124,9 @@
     font-size: 0.85rem;
 
     a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       color: $text-muted;
       &:hover {
         color: $gold-light;
@@ -224,6 +227,81 @@
   &-empty {
     color: $text-muted;
     font-size: 0.9rem;
+  }
+
+  // Commandes : liste dépliable (détail des produits achetés) via <details>.
+  &-orders {
+    background: $black-card;
+    border: 1px solid $border;
+    border-radius: 16px;
+    padding: 24px;
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    > ul {
+      list-style: none;
+    }
+
+    > ul > li {
+      border-bottom: 1px solid $border;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &-order {
+    summary {
+      display: grid;
+      grid-template-columns: 1fr auto auto 16px;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+      cursor: pointer;
+      list-style: none;
+      font-size: 0.92rem;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      span {
+        color: $text-muted;
+      }
+    }
+
+    &[open] .account-order-chevron {
+      transform: rotate(180deg);
+    }
+
+    .account-order-chevron {
+      display: block;
+      width: 14px;
+      height: 14px;
+      justify-self: center;
+      color: $text-muted;
+      transform-origin: center center;
+      transition: transform 0.2s ease;
+    }
+
+    .account-order-items {
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 2px 0 6px 4px;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 4px 0;
+        color: $text-muted;
+        font-size: 0.88rem;
+      }
+    }
   }
 
   &-side {

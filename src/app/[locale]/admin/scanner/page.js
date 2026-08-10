@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "@/i18n/Link";
+import ArrowLeft from "@/components/atoms/ArrowLeft";
 import { createClient } from "@/lib/supabase/client";
 import { creditPoints, redeemPointsAdmin } from "@/lib/adminActions";
 import { useI18n, useT } from "@/i18n/I18nProvider";
@@ -111,6 +112,7 @@ export default function ScannerPage() {
             <h1>{t("scanner.title")}</h1>
           </div>
           <Link href="/admin" className="btn btn-outline">
+            <ArrowLeft />
             {t("scanner.back")}
           </Link>
         </div>

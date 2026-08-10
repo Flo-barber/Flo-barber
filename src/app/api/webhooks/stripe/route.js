@@ -85,12 +85,35 @@ export async function POST(req) {
       // ignore
     }
 
+    // Instantané des produits achetés : on fige nom (FR/EN) et prix unitaire au
+    // moment du paiement, pour que l'historique reste exact même si le produit
+    // est renommé / re-tarifé / supprimé plus tard.
+    const slugs = [...new Set(items.map((it) => it?.slug).filter(Boolean))];
+    let orderItems = items;
+    if (slugs.length) {
+      const { data: prods } = await admin
+        .from("products")
+        .select("slug, name_fr, name_en, price_cents")
+        .in("slug", slugs);
+      const bySlug = Object.fromEntries((prods || []).map((p) => [p.slug, p]));
+      orderItems = items.map((it) => {
+        const p = bySlug[it.slug];
+        return {
+          slug: it.slug,
+          qty: Math.max(1, parseInt(it.qty, 10) || 1),
+          name_fr: p?.name_fr ?? null,
+          name_en: p?.name_en ?? null,
+          price_cents: p?.price_cents ?? null,
+        };
+      });
+    }
+
     const { error: orderErr } = await admin.from("orders").insert({
       user_id: userId || null,
       email: s.customer_details?.email || s.customer_email || null,
       amount_eur: amount,
       currency: s.currency || "eur",
-      items,
+      items: orderItems,
       fulfillment: "shipping",
       shipping: s.shipping_details || s.customer_details?.address || null,
       stripe_session_id: s.id,

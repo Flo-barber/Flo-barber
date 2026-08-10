@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/i18n/Link";
+import ArrowLeft from "@/components/atoms/ArrowLeft";
 import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/i18n/I18nProvider";
 import { useLocalePath } from "@/i18n/useLocalePath";
@@ -193,7 +194,10 @@ export default function ConnexionPage() {
         </p>
 
         <p className="auth-back">
-          <Link href="/">{t("auth.back")}</Link>
+          <Link href="/">
+            <ArrowLeft size={15} />
+            {t("auth.back")}
+          </Link>
         </p>
       </div>
     </section>
