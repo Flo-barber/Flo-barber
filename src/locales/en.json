@@ -2,7 +2,8 @@
   "common": {
     "salon": "salon",
     "salons": "salons",
-    "pts": "pts"
+    "pts": "pts",
+    "back": "Back"
   },
   "nav": {
     "home": "Home",

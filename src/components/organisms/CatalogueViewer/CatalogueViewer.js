@@ -188,9 +188,15 @@ export default function CatalogueViewer({ cuts = [], products = {} }) {
   };
   function onPointerMove(e) {
     if (!dragRef.current) return;
-    const delta = horizontal
-      ? e.clientX - dragRef.current.x
-      : e.clientY - dragRef.current.y;
+    const dx = e.clientX - dragRef.current.x;
+    const dy = e.clientY - dragRef.current.y;
+    // Mobile (roue horizontale) : un geste à dominante verticale = scroll de la
+    // page → on relâche le drag pour ne pas bouger le carrousel.
+    if (horizontal && !draggedRef.current && Math.abs(dy) > Math.abs(dx) + 2) {
+      dragRef.current = null;
+      return;
+    }
+    const delta = horizontal ? dx : dy;
     if (Math.abs(delta) > 4) draggedRef.current = true;
     const step = dragRef.current.source === "photo" ? photoStepPx() : listStepPx();
     // Borné à ±1 : on ne peut avancer que d'une seule section par glissement.

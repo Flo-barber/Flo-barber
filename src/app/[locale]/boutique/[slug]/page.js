@@ -1,9 +1,8 @@
-import Link from "@/i18n/Link";
 import { getProduct } from "@/lib/products";
 import { formatEuro } from "@/lib/format";
 import { getT } from "@/i18n/dictionaries";
 import AddToCart from "@/components/molecules/AddToCart";
-import ArrowLeft from "@/components/atoms/ArrowLeft";
+import BackButton from "@/components/atoms/BackButton";
 
 export const dynamic = "force-dynamic";
 
@@ -27,10 +26,9 @@ export default async function ProductPage({ params }) {
       <section className="section">
         <div className="container product">
           <p>{t("shop.notFound")}</p>
-          <Link href="/boutique" className="btn btn-outline">
-            <ArrowLeft />
-            {t("shop.backToShop")}
-          </Link>
+          <BackButton className="btn btn-outline" fallback="/boutique">
+            {t("common.back")}
+          </BackButton>
         </div>
       </section>
     );
@@ -58,10 +56,9 @@ export default async function ProductPage({ params }) {
           ) : (
             <AddToCart slug={product.slug} />
           )}
-          <Link href="/boutique" className="product-back">
-            <ArrowLeft size={16} />
-            {t("shop.backToShop")}
-          </Link>
+          <BackButton className="product-back" fallback="/boutique" arrowSize={16}>
+            {t("common.back")}
+          </BackButton>
         </div>
       </div>
     </section>

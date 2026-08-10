@@ -390,6 +390,13 @@
     gap: 20px;
   }
 
+  // Sur mobile : le geste vertical scrolle TOUJOURS la page ; seul l'horizontal
+  // pilote le carrousel. (Garanti par media query, indépendamment du JS.)
+  .cv-list,
+  .cv-photo {
+    touch-action: pan-y;
+  }
+
   .cv-list {
     height: 128px;
   }
