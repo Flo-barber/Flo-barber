@@ -3,7 +3,9 @@
     "salon": "salon",
     "salons": "salons",
     "pts": "pts",
-    "back": "Back"
+    "back": "Back",
+    "chooseFile": "Choose a file",
+    "changeFile": "Change photo"
   },
   "nav": {
     "home": "Home",
@@ -38,6 +40,9 @@
         "d": "The full ritual with straight razor and hot towel, for an unrivaled close shave."
       }
     ],
+    "teamTitlePre": "Our ",
+    "teamTitleAccent": "barbers",
+    "teamSub": "A passionate team, dedicated to your style.",
     "locationsAccent": "near you",
     "locationsDesc": "Find all our salons on an interactive map. Search by city or postal code and book directly online via Planity.",
     "ctaMap": "Open the map"
@@ -135,6 +140,7 @@
     "scanClient": "Scan a client",
     "products": "Products",
     "cuts": "Cuts",
+    "barbers": "Barbers",
     "statClients": "Clients",
     "statPoints": "Points issued",
     "thClient": "Client",
@@ -194,6 +200,30 @@
     "imageType": "Unsupported format. Use JPG, PNG or WebP (iPhone HEIC photos don't display on the web).",
     "uploadError": "Upload failed. Check the “products” Storage bucket.",
     "imageUploaded": "Image uploaded. Remember to save the cut."
+  },
+  "adminBarbers": {
+    "title": "Barber management",
+    "newBarber": "New barber",
+    "name": "Name",
+    "roleFr": "Role (FR)",
+    "roleEn": "Role (EN)",
+    "bioFr": "Bio (FR)",
+    "bioEn": "Bio (EN)",
+    "sort": "Order",
+    "image": "Photo (URL)",
+    "imagePlaceholder": "Filled automatically after upload",
+    "upload": "Upload a photo",
+    "active": "Active (visible on home)",
+    "add": "Add",
+    "save": "Save",
+    "saved": "Barber saved.",
+    "deleted": "Barber deleted.",
+    "delete": "Delete",
+    "deleteConfirm": "Delete the barber “{name}”?",
+    "required": "Name, roles and bios (FR and EN) are required.",
+    "imageType": "Unsupported format. Use JPG, PNG or WebP (iPhone HEIC photos don't display on the web).",
+    "uploadError": "Upload failed. Check the “products” Storage bucket.",
+    "imageUploaded": "Photo uploaded. Remember to save the barber."
   },
   "scanner": {
     "eyebrow": "Salon area",

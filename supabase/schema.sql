@@ -407,3 +407,54 @@ insert into public.cuts (slug, title_fr, title_en, description_fr, description_e
    '["/catalogue/buzz-cut-1.jpg"]'::jsonb,
    '["baume-apres-rasage"]'::jsonb, 5)
 on conflict (slug) do nothing;
+
+-- =============================================================
+--  BARBIERS (équipe) — édités par l'admin, lus par tous
+-- -------------------------------------------------------------
+--  Présentés en timeline sur la page d'accueil (section « Nos barbiers »).
+--  Bloc idempotent.
+-- =============================================================
+create table if not exists public.barbers (
+  slug text primary key,
+  name text not null,
+  role_fr text,
+  role_en text,
+  bio_fr text,
+  bio_en text,
+  image text,
+  active boolean not null default true,
+  sort integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.barbers enable row level security;
+
+drop policy if exists barbers_select on public.barbers;
+create policy barbers_select on public.barbers
+  for select using (active = true or public.is_admin());
+
+drop policy if exists barbers_write on public.barbers;
+create policy barbers_write on public.barbers
+  for all using (public.is_admin()) with check (public.is_admin());
+
+-- Seed de l'équipe de démo (photos = images de /catalogue, à remplacer par de
+-- vraies photos de portrait).
+insert into public.barbers (slug, name, role_fr, role_en, bio_fr, bio_en, image, sort) values
+  ('flo', 'Flo', 'Fondateur & Master Barber', 'Founder & Master Barber',
+   'À l''origine de Flo Barber, il façonne le style de la maison depuis le premier coup de ciseaux.',
+   'The founder of Flo Barber — shaping the house style since the very first cut.',
+   '/catalogue/fade-classique-1.jpg', 1),
+  ('karim', 'Karim', 'Barbier senior', 'Senior Barber',
+   'Spécialiste du dégradé net et de la barbe sculptée au rasoir.',
+   'Specialist in clean fades and razor-sculpted beards.',
+   '/catalogue/pompadour-1.jpg', 2),
+  ('antoine', 'Antoine', 'Barbier coiffeur', 'Barber & Stylist',
+   'Coupes modernes et texturées, toujours à l''écoute du style de chacun.',
+   'Modern, textured cuts — always tuned to each client''s style.',
+   '/catalogue/crop-francais-1.jpg', 3),
+  ('sofiane', 'Sofiane', 'Barbier & rasage traditionnel', 'Barber & Traditional Shave',
+   'Le rituel du coupe-chou et de la serviette chaude, pour un rasage de près.',
+   'The straight-razor and hot-towel ritual, for the closest shave.',
+   '/catalogue/buzz-cut-1.jpg', 4)
+on conflict (slug) do nothing;

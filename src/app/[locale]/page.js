@@ -1,6 +1,10 @@
 import Link from "@/i18n/Link";
 import salons from "@/data/salons";
+import BarbersTimeline from "@/components/organisms/BarbersTimeline";
+import { getBarbers } from "@/lib/barbers";
 import { getT } from "@/i18n/dictionaries";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
@@ -17,6 +21,7 @@ export default async function HomePage({ params }) {
   const t = getT(locale);
   const services = t("home.services");
   const salonWord = salons.length > 1 ? t("common.salons") : t("common.salon");
+  const barbers = await getBarbers();
 
   return (
     <>
@@ -61,6 +66,9 @@ export default async function HomePage({ params }) {
           </div>
         </div>
       </section>
+
+      {/* ÉQUIPE — timeline animée au scroll (barbiers depuis la base) */}
+      <BarbersTimeline barbers={barbers} />
 
       {/* LOCATIONS TEASER */}
       <section className="section section-alt">

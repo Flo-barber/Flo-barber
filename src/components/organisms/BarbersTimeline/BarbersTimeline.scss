@@ -1,0 +1,199 @@
+@use "variables" as *;
+
+.barbers {
+  overflow: hidden; // évite tout débordement horizontal pendant les animations
+}
+
+.bt-timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 48px auto 0;
+  padding: 20px 0 10px;
+
+  // Ligne verticale centrale
+  .bt-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: $border;
+    border-radius: 2px;
+  }
+
+  .bt-line-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: $metal-gradient;
+    border-radius: 2px;
+  }
+
+  // Ciseaux qui suivent la progression (top piloté en JS)
+  .bt-scissors {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    display: flex;
+    padding: 7px;
+    color: $metal-light;
+    background: $black;
+    border: 1px solid $border;
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.45);
+  }
+}
+
+// --- Entrées ---
+.bt-item {
+  position: relative;
+  width: 50%;
+  padding: 16px 46px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.is-left {
+    margin-left: 0;
+  }
+
+  &.is-right {
+    margin-left: 50%;
+  }
+
+  &.is-visible {
+    opacity: 1;
+  }
+}
+
+.bt-dot {
+  position: absolute;
+  top: 34px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $metal;
+  border: 2px solid $black;
+
+  .bt-item.is-left & {
+    right: -6px;
+  }
+  .bt-item.is-right & {
+    left: -6px;
+  }
+}
+
+.bt-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: $black-card;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+// Volets « découpe » recouvrant toute la carte, écartés du centre à la révélation.
+.bt-card-cut {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: $concrete;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  &::before {
+    left: 0;
+    border-right: 1px solid $metal-light; // trait de coupe au centre
+  }
+  &::after {
+    right: 0;
+  }
+}
+
+.bt-item.is-visible .bt-card-cut::before {
+  transform: translateX(-101%);
+}
+.bt-item.is-visible .bt-card-cut::after {
+  transform: translateX(101%);
+}
+
+.bt-photo {
+  position: relative;
+  width: 94px;
+  height: 94px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: $concrete;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &-ph {
+    object-fit: contain !important;
+    padding: 20px;
+    opacity: 0.5;
+  }
+}
+
+.bt-info {
+  min-width: 0;
+}
+
+.bt-name {
+  font-size: 1.15rem;
+  margin-bottom: 2px;
+}
+
+.bt-role {
+  font-family: $font-condensed;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.78rem;
+  color: $metal-light;
+  margin-bottom: 8px;
+}
+
+.bt-bio {
+  color: $text-muted;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+// --- Mobile : ligne à gauche, entrées empilées ---
+@media (max-width: 720px) {
+  .bt-timeline .bt-line {
+    left: 20px;
+  }
+
+  .bt-item,
+  .bt-item.is-left,
+  .bt-item.is-right {
+    width: 100%;
+    margin-left: 0;
+    padding: 12px 0 12px 50px;
+  }
+
+  .bt-dot {
+    left: 14px !important;
+    right: auto !important;
+  }
+}

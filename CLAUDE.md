@@ -27,7 +27,12 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 ## 3. Fonctionnalités et flux
 
 **Vitrine publique**
-- `/` — accueil (hero, prestations, aperçu salons).
+- `/` — accueil (hero, prestations, **timeline « Nos barbiers »**, aperçu salons).
+  L'équipe est en base Supabase (table `barbers` : `name`, `role_fr/en`, `bio_fr/en`,
+  `image`, `active`, `sort`), lue via `src/lib/barbers.js` (`getBarbers`) et passée à
+  l'organism client `BarbersTimeline` (apparition « découpe » synchronisée aux ciseaux
+  qui suivent le scroll, réversible). Édition sans code via l'**admin `/admin/barbiers`**
+  (slug auto depuis le nom, upload photo → bucket `products` préfixe `barbers/`).
 - `/recherche` — carte Leaflet + recherche ville/CP + tri par proximité (`"use client"`).
 - `/catalogue` — coupes signature : organism client `CatalogueViewer`. **Roue infinie custom**
   (sans dépendance) pilotée par un unique index `active` (modulo → boucle sans fin, toujours

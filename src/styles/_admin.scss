@@ -97,6 +97,53 @@
   }
 }
 
+// Zone image (produit / barbier) : miniature + input fichier natif, comme la
+// galerie des coupes → l'aperçu s'actualise dès l'upload (confirmation visuelle).
+.ap-image {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+
+  input[type="file"] {
+    font-size: 0.8rem;
+    color: $text-muted;
+    max-width: 220px;
+  }
+}
+
+// Champ fichier stylé : on masque l'input natif (et son « aucun fichier choisi »)
+// et on présente un bouton clair. Le clic sur le label ouvre le sélecteur.
+.ap-file {
+  input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+  }
+
+  .ap-file-btn {
+    display: inline-block;
+    padding: 9px 12px;
+    border: 1px dashed $border;
+    border-radius: 6px;
+    color: $metal-light;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-align: center;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover .ap-file-btn {
+    border-color: $metal;
+    color: $text;
+  }
+}
+
 .ap-check {
   display: flex;
   align-items: center;
