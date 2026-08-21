@@ -35,7 +35,9 @@ export default async function ComptePage({ params }) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/${locale}/compte/connexion?redirect=/${locale}/compte`);
+    // Pas de paramètre ?redirect : la connexion renvoie déjà par défaut vers
+    // /compte, donc l'URL reste propre (/compte/connexion).
+    redirect(`/${locale}/compte/connexion`);
   }
 
   const { data: profile } = await supabase

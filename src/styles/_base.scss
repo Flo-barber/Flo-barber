@@ -146,3 +146,26 @@ h3 {
     background: $black-soft;
   }
 }
+
+// --- Chargement de route (feedback instantané pendant la navigation) ---
+.route-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - #{$nav-height});
+}
+
+.route-loading-spin {
+  width: 34px;
+  height: 34px;
+  border: 3px solid $border;
+  border-top-color: $metal-light;
+  border-radius: 50%;
+  animation: route-spin 0.8s linear infinite;
+}
+
+@keyframes route-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
