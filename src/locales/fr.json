@@ -148,7 +148,15 @@
     "thEmail": "Email",
     "thPhone": "Téléphone",
     "thPoints": "Points",
-    "empty": "Aucun client inscrit pour l'instant."
+    "empty": "Aucun client inscrit pour l'instant.",
+    "searchPlaceholder": "Rechercher un client par nom…",
+    "searchBtn": "Rechercher",
+    "searchReset": "Réinitialiser",
+    "noResults": "Aucun client ne correspond à cette recherche.",
+    "manageClient": "Gérer les points de ce client",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {page} / {total}"
   },
   "adminProducts": {
     "title": "Gestion des produits",

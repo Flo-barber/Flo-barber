@@ -148,7 +148,15 @@
     "thEmail": "Email",
     "thPhone": "Phone",
     "thPoints": "Points",
-    "empty": "No client registered yet."
+    "empty": "No client registered yet.",
+    "searchPlaceholder": "Search a client by name…",
+    "searchBtn": "Search",
+    "searchReset": "Reset",
+    "noResults": "No client matches this search.",
+    "manageClient": "Manage this client's points",
+    "prev": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} / {total}"
   },
   "adminProducts": {
     "title": "Product management",

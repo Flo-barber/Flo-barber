@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import Link from "@/i18n/Link";
 import ArrowLeft from "@/components/atoms/ArrowLeft";
 import { createClient } from "@/lib/supabase/client";
@@ -30,8 +31,8 @@ export default function ScannerPage() {
     []
   );
 
-  const handleScan = useCallback(
-    async (decoded) => {
+  const loadClient = useCallback(
+    async (id) => {
       setScanning(false);
       setErr(null);
       setMsg(null);
@@ -39,7 +40,7 @@ export default function ScannerPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select("id, full_name, email, points")
-        .eq("id", decoded)
+        .eq("id", id)
         .maybeSingle();
       if (error || !data) {
         setErr(t("scanner.notFound"));
@@ -49,6 +50,15 @@ export default function ScannerPage() {
     },
     [t]
   );
+
+  // Pré-chargement depuis la liste clients (/admin/scanner?client=<id>) : on saute
+  // le scan QR et on arrive directement sur l'ajout / utilisation de points.
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const preId = searchParams.get("client");
+    if (preId) loadClient(preId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function submit(e) {
     e.preventDefault();
@@ -119,7 +129,7 @@ export default function ScannerPage() {
 
         {scanning && !client && (
           <div className="scanner-cam">
-            <QrScanner onScan={handleScan} />
+            <QrScanner onScan={loadClient} />
             <p className="scanner-hint">{t("scanner.hint")}</p>
           </div>
         )}
