@@ -218,6 +218,13 @@ Mise en route fidélité détaillée dans `GUIDE-FIDELITE.md`.
 
 - **Secrets** : `flo-barber-wallet-*.json` (clé de service Google) et `.env.local` sont
   gitignorés — **ne jamais les commiter ni les partager**.
+- **Captcha anti-bots** (inscription/connexion) : Cloudflare **Turnstile** via le composant
+  `molecules/Turnstile`. Clé de site publique dans `NEXT_PUBLIC_TURNSTILE_SITE_KEY` ; la clé
+  secrète se règle dans **Supabase → Authentication → Settings → Enable Captcha protection**
+  (le jeton est passé à `signUp`/`signInWithPassword` via `options.captchaToken`, et vérifié
+  côté Supabase). Si la clé de site est absente, le captcha est **désactivé** (dev). Rappel
+  sécurité entrées : requêtes 100 % via le query builder (pas d'injection SQL), aucun
+  `dangerouslySetInnerHTML` (pas de XSS), écritures verrouillées par RLS.
 - **RGPD / légal** : base en place — politique de confidentialité (`/confidentialite`),
   mentions légales (`/mentions-legales`) et **CGV/CGU** (`/cgv`) rendues via l'organism
   `LegalDoc` depuis `src/data/legal.js` (bilingue, **placeholders `[CROCHETS]` à compléter** :

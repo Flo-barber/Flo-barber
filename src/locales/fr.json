@@ -132,7 +132,8 @@
     "errGeneric": "Une erreur est survenue.",
     "consentBefore": "J'accepte la ",
     "consentLink": "politique de confidentialité",
-    "consentRequired": "Vous devez accepter la politique de confidentialité."
+    "consentRequired": "Vous devez accepter la politique de confidentialité.",
+    "captchaRequired": "Merci de valider le captcha."
   },
   "admin": {
     "eyebrow": "Espace salon",

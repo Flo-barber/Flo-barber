@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/i18n/Link";
 import ArrowLeft from "@/components/atoms/ArrowLeft";
+import Turnstile, { CAPTCHA_ENABLED } from "@/components/molecules/Turnstile";
 import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/i18n/I18nProvider";
 import { useLocalePath } from "@/i18n/useLocalePath";
@@ -23,6 +24,8 @@ export default function ConnexionPage() {
   const [error, setError] = useState(null);
   const [info, setInfo] = useState(null);
   const [consent, setConsent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaKey, setCaptchaKey] = useState(0); // bump → remonte le widget (nouveau jeton)
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -47,8 +50,15 @@ export default function ConnexionPage() {
       return;
     }
 
+    // Captcha (anti-bots) : requis si activé (clé de site définie).
+    if (CAPTCHA_ENABLED && !captchaToken) {
+      setError(t("auth.captchaRequired"));
+      return;
+    }
+
     setStatus("loading");
     const supabase = createClient();
+    const captcha = captchaToken ? { captchaToken } : {};
 
     try {
       if (mode === "signup") {
@@ -56,6 +66,7 @@ export default function ConnexionPage() {
           email: form.email.trim(),
           password: form.password,
           options: {
+            captchaToken: captchaToken || undefined,
             data: {
               full_name: form.fullName.trim(),
               phone: form.phone.trim(),
@@ -68,12 +79,14 @@ export default function ConnexionPage() {
           setInfo(t("auth.confirmInfo"));
           setMode("login");
           setStatus(null);
+          resetCaptcha();
           return;
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: form.email.trim(),
           password: form.password,
+          options: captcha,
         });
         if (error) throw error;
       }
@@ -86,7 +99,14 @@ export default function ConnexionPage() {
           : err?.message || t("auth.errGeneric")
       );
       setStatus(null);
+      resetCaptcha();
     }
+  }
+
+  // Le jeton Turnstile est à usage unique : on remonte le widget après chaque essai.
+  function resetCaptcha() {
+    setCaptchaToken("");
+    setCaptchaKey((k) => k + 1);
   }
 
   return (
@@ -162,6 +182,12 @@ export default function ConnexionPage() {
               </span>
             </label>
           )}
+
+          <Turnstile
+            key={`${mode}-${captchaKey}`}
+            action={mode}
+            onToken={setCaptchaToken}
+          />
 
           {error && <p className="auth-error">{error}</p>}
           {info && <p className="auth-info">{info}</p>}

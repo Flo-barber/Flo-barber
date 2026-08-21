@@ -132,7 +132,8 @@
     "errGeneric": "Something went wrong.",
     "consentBefore": "I accept the ",
     "consentLink": "privacy policy",
-    "consentRequired": "You must accept the privacy policy."
+    "consentRequired": "You must accept the privacy policy.",
+    "captchaRequired": "Please complete the captcha."
   },
   "admin": {
     "eyebrow": "Salon area",

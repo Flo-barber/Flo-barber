@@ -60,6 +60,7 @@ export default function RecherchePage() {
 
   async function handleSearch(e) {
     e.preventDefault();
+    if (status === "loading") return; // évite les envois répétés (spam Nominatim)
     const q = query.trim();
     if (!q) return;
     setStatus("loading");
