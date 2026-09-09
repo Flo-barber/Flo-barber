@@ -17,8 +17,13 @@ Réservation de rendez-vous déléguée à **Planity** (un lien par salon).
 - **Next.js 14** (App Router, React 18) — Server Components par défaut, SSR pour le SEO.
 - **Supabase** (`@supabase/ssr`) — authentification + base de données de la fidélité.
 - **Google Wallet** (`google-auth-library` + `jsonwebtoken`) — carte de fidélité mobile.
-- **Leaflet / react-leaflet** — carte interactive (fonds CARTO dark + OpenStreetMap),
+- **Leaflet / react-leaflet** — carte interactive. Fond de carte **vectoriel dark
+  d'OpenFreeMap** (gratuit, sans clé API) via **MapLibre GL** (`@maplibre/maplibre-gl-leaflet`),
   géocodage via l'API publique **Nominatim** (gratuit, sans clé API).
+  > ⚠️ **`maplibre-gl` est figé en v4.** Le pont `@maplibre/maplibre-gl-leaflet` s'appuie
+  > sur `map.transform`, un interne supprimé de l'API publique de MapLibre en v5+. Passer
+  > maplibre-gl en v5 ou v6 **casse le rendu de la carte** (canvas noir, aucune tuile).
+  > Rester en v4, ou repasser sur un fond raster avec `TileLayer` (ex. CARTO avec clé).
 - **QR** — `qrcode.react` (génération de la carte), `html5-qrcode` (scan caméra admin).
 - **SCSS** (`sass`) — thème centralisé, architecture atomic design (voir plus bas).
 - **PWA** — manifest, service worker, icônes.

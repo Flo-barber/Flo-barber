@@ -1,11 +1,27 @@
 "use client";
 
+// =============================================================
+//  ⚠️ CONTRAINTE — maplibre-gl est FIGÉ en v4.
+//  Le fond de carte vectoriel (OpenFreeMap) est rendu via le pont
+//  @maplibre/maplibre-gl-leaflet, qui lit `map.transform` — un interne
+//  supprimé de l'API publique de MapLibre en v5+. En v5/v6, la carte
+//  ne demande aucune tuile et reste NOIRE.
+//  → Ne pas mettre à jour maplibre-gl au-delà de la v4 sans remplacer
+//    ce pont (ou revenir à un TileLayer raster, ex. CARTO avec clé).
+// =============================================================
+
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
+import * as maplibregl from "maplibre-gl";
+import "@maplibre/maplibre-gl-leaflet";
 import { useT } from "@/i18n/I18nProvider";
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./SalonMap.scss"; // après leaflet.css : nos overrides priment par cascade
+
+// Le plugin maplibre-gl-leaflet référence le global `maplibregl`.
+if (typeof window !== "undefined") window.maplibregl = maplibregl;
 
 // Marqueur doré "FB" personnalisé (évite le bug des icônes par défaut de Leaflet)
 function fbIcon(active) {
@@ -16,6 +32,40 @@ function fbIcon(active) {
     iconAnchor: [22, 22],
     popupAnchor: [0, -26],
   });
+}
+
+// Fond de carte vectoriel sombre (OpenFreeMap, sans clé API)
+function VectorBasemap() {
+  const map = useMap();
+  useEffect(() => {
+    const gl = L.maplibreGL({
+      style: "https://tiles.openfreemap.org/styles/dark",
+      attribution:
+        '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    const glMap = typeof gl.getMaplibreMap === "function" ? gl.getMaplibreMap() : null;
+    if (glMap) {
+      // Certaines icônes de POI référencées par le style OpenFreeMap sont absentes
+      // de son sprite. On leur fournit une image transparente pour éviter les
+      // warnings "styleimagemissing" dans la console (aucun impact visuel).
+      glMap.on("styleimagemissing", (e) => {
+        if (e && e.id && !glMap.hasImage(e.id)) {
+          glMap.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
+        }
+      });
+    }
+    const id = setTimeout(() => {
+      map.invalidateSize();
+      if (glMap) glMap.resize();
+    }, 300);
+
+    return () => {
+      clearTimeout(id);
+      map.removeLayer(gl);
+    };
+  }, [map]);
+  return null;
 }
 
 // Recentre la carte + ouvre la popup du salon actif
@@ -63,10 +113,7 @@ export default function SalonMap({
       scrollWheelZoom={true}
       className="salon-map-container"
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      />
+      <VectorBasemap />
       <MapController
         center={center}
         zoom={zoom}

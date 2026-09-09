@@ -224,7 +224,11 @@ export const legal = {
         { h: "13. Données personnelles" },
         `Le traitement de vos données est décrit dans la politique de confidentialité.`,
         { h: "14. Droit applicable et litiges" },
-        `Les présentes conditions sont soumises au droit français. En cas de litige, vous pouvez recourir gratuitement à un médiateur de la consommation [MÉDIATEUR À INDIQUER] ou à la plateforme européenne de règlement en ligne des litiges (ec.europa.eu/consumers/odr).`,
+        // ⚠️ Médiation de la consommation à compléter : lorsque la société aura souscrit à un
+        //    médiateur agréé CECMC, remplacer le paragraphe ci-dessous par la mention
+        //    « …recourir gratuitement au médiateur [NOM], [ADRESSE POSTALE], [SITE WEB]. »
+        //    (Ne pas rétablir la plateforme européenne ODR : fermée depuis juillet 2025.)
+        `Les présentes conditions sont soumises au droit français. En cas de litige, le client est invité à contacter d'abord Flo Barber (${COMPANY.email}) afin de rechercher une solution amiable.`,
       ],
     },
     en: {
@@ -265,7 +269,8 @@ export const legal = {
         { h: "13. Personal data" },
         `The processing of your data is described in the privacy policy.`,
         { h: "14. Governing law and disputes" },
-        `These terms are governed by French law. In the event of a dispute, you may use a consumer mediator free of charge [MEDIATOR TO BE SPECIFIED] or the European online dispute resolution platform (ec.europa.eu/consumers/odr).`,
+        // ⚠️ Consumer mediation to be completed once a CECMC-registered mediator has been subscribed.
+        `These terms are governed by French law. In the event of a dispute, the customer is invited to first contact Flo Barber (${COMPANY.email}) to seek an amicable solution.`,
       ],
     },
   },
