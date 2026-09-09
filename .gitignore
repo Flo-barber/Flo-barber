@@ -37,3 +37,6 @@ flo-barber-wallet-*.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Livrables Claude (hors dépôt)
+Claude outputs/
