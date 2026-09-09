@@ -213,9 +213,9 @@ export default function ScannerPage() {
                       <button type="submit" className="btn btn-primary" disabled={busy}>
                         {busy ? "…" : t("scanner.credit")}
                       </button>
-                      <button type="button" className="btn btn-outline" onClick={reset}>
+                      <Link href="/admin" className="btn btn-outline">
                         {t("scanner.cancel")}
-                      </button>
+                      </Link>
                     </div>
                   </form>
                 ) : (
@@ -247,9 +247,9 @@ export default function ScannerPage() {
                       <button type="submit" className="btn btn-primary" disabled={busy}>
                         {busy ? "…" : t("scanner.redeem")}
                       </button>
-                      <button type="button" className="btn btn-outline" onClick={reset}>
+                      <Link href="/admin" className="btn btn-outline">
                         {t("scanner.cancel")}
-                      </button>
+                      </Link>
                     </div>
                   </form>
                 )}

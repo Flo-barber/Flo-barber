@@ -9,7 +9,7 @@ const ISSUER_ID = process.env.GOOGLE_WALLET_ISSUER_ID;
 const CLASS_SUFFIX = process.env.GOOGLE_WALLET_CLASS_SUFFIX || "flo_barber_loyalty";
 const LOGO_URL =
   process.env.GOOGLE_WALLET_LOGO_URL ||
-  "https://flo-barber.vercel.app/icon-512.png";
+  "https://flo-barber-orcin.vercel.app/icon-512.png";
 const BASE = "https://walletobjects.googleapis.com/walletobjects/v1";
 const SCOPE = "https://www.googleapis.com/auth/wallet_object.issuer";
 
