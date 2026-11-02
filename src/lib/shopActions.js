@@ -6,8 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePoints } from "@/lib/googleWallet";
 import { buildLineItems } from "@/lib/products";
-import {
 import { getPageFlags } from "@/lib/pageSettings";
+import {
   SHIPPING_CENTS,
   POINT_MIN_REDEEM,
   pointsToCents,
