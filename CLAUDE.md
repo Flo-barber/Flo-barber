@@ -27,8 +27,8 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 ## 3. Fonctionnalités et flux
 
 **Vitrine publique**
-- `/` — accueil (hero, prestations, **timeline « Nos barbiers »**, aperçu salons).
-  L'équipe est en base Supabase (table `barbers` : `name`, `role_fr/en`, `bio_fr/en`,
+- `/` — accueil (hero, prestations, aperçu salons). La **timeline « Nos barbiers »**
+  (`BarbersTimeline`) n'est **plus affichée** sur l'accueil (retirée), mais reste disponible. L'équipe est en base Supabase (table `barbers` : `name`, `role_fr/en`, `bio_fr/en`,
   `image`, `active`, `sort`), lue via `src/lib/barbers.js` (`getBarbers`) et passée à
   l'organism client `BarbersTimeline` (apparition « découpe » synchronisée aux ciseaux
   qui suivent le scroll, réversible). Édition sans code via l'**admin `/admin/barbiers`**
@@ -96,6 +96,12 @@ Google Wallet) avec un **espace admin** pour créditer les points.
 **Espace admin / salon** `/admin` (protégé)
 - Liste clients + `/admin/scanner` (caméra `QrScanner`) : **deux modes** — *créditer* un achat
   (`creditPoints`, 1 € = 1 pt) ou *utiliser des points* (`redeemPointsAdmin`, min 100).
+- **Pages activables** : switchs (molecule `PageToggle`) sur `/admin` pour afficher/masquer
+  `catalogue` et `boutique` (table `page_settings`, lecture publique / écriture `is_admin`,
+  server action `setPageEnabled`). Lu via `getPageFlags()` (`src/lib/pageSettings.js`, mis en
+  cache, tag `page-settings`). Page désactivée → redirection vers l'accueil (layout de la section), liens nav/footer,
+  CTA d'accueil, icône panier, produits liés du catalogue et sitemap masqués ; checkout refusé
+  si la boutique est off. Toute nouvelle CTA vers ces pages doit tester ce flag.
 
 ## 4. Architecture & conventions Next.js (règles en place — à respecter)
 

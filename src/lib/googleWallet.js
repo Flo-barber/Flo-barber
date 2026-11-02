@@ -10,6 +10,10 @@ const CLASS_SUFFIX = process.env.GOOGLE_WALLET_CLASS_SUFFIX || "flo_barber_loyal
 const LOGO_URL =
   process.env.GOOGLE_WALLET_LOGO_URL ||
   "https://flo-barber-orcin.vercel.app/icon-512.png";
+// Google copie l'image à la création/maj de la classe : changer cette version
+// (ex. après un changement de logo) force Google à re-télécharger le PNG.
+const LOGO_VERSION = "metal-1";
+const LOGO_URI = `${LOGO_URL}${LOGO_URL.includes("?") ? "&" : "?"}v=${LOGO_VERSION}`;
 const BASE = "https://walletobjects.googleapis.com/walletobjects/v1";
 const SCOPE = "https://www.googleapis.com/auth/wallet_object.issuer";
 
@@ -49,7 +53,18 @@ function authClient() {
   return auth.getClient();
 }
 
-// Crée la classe (gabarit de carte) si elle n'existe pas encore.
+const CLASS_STYLE = {
+  hexBackgroundColor: "#0a0a0a",
+  programLogo: {
+    sourceUri: { uri: LOGO_URI },
+    contentDescription: {
+      defaultValue: { language: "fr-FR", value: "Flo Barber" },
+    },
+  },
+};
+
+// Crée la classe (gabarit de carte) si elle n'existe pas encore, ou la met à
+// jour si son logo est obsolète (ex. ancien logo doré → logo métal actuel).
 let classEnsured = false;
 export async function ensureClass() {
   if (classEnsured) return;
@@ -57,7 +72,20 @@ export async function ensureClass() {
   const id = classId();
 
   try {
-    await client.request({ url: `${BASE}/loyaltyClass/${id}`, method: "GET" });
+    const { data } = await client.request({
+      url: `${BASE}/loyaltyClass/${id}`,
+      method: "GET",
+    });
+    if (data?.programLogo?.sourceUri?.uri !== LOGO_URI) {
+      // Best-effort : un échec de mise à jour ne bloque pas l'ajout au wallet.
+      await client
+        .request({
+          url: `${BASE}/loyaltyClass/${id}`,
+          method: "PATCH",
+          data: { ...CLASS_STYLE, reviewStatus: "UNDER_REVIEW" },
+        })
+        .catch(() => {});
+    }
     classEnsured = true;
     return;
   } catch (e) {
@@ -72,13 +100,7 @@ export async function ensureClass() {
       issuerName: "Flo Barber",
       programName: "Fidélité Flo Barber",
       reviewStatus: "UNDER_REVIEW",
-      hexBackgroundColor: "#0a0a0a",
-      programLogo: {
-        sourceUri: { uri: LOGO_URL },
-        contentDescription: {
-          defaultValue: { language: "fr-FR", value: "Flo Barber" },
-        },
-      },
+      ...CLASS_STYLE,
     },
   });
   classEnsured = true;

@@ -5,7 +5,7 @@ import Logo from "@/components/atoms/Logo";
 import { useT } from "@/i18n/I18nProvider";
 import "./Footer.scss";
 
-export default function Footer() {
+export default function Footer({ pages = {} }) {
   const t = useT();
   return (
     <footer className="footer">
@@ -22,7 +22,7 @@ export default function Footer() {
         <nav className="footer-nav">
           <Link href="/">{t("nav.home")}</Link>
           <Link href="/recherche">{t("nav.find")}</Link>
-          <Link href="/catalogue">{t("nav.catalogue")}</Link>
+          {pages.catalogue !== false && <Link href="/catalogue">{t("nav.catalogue")}</Link>}
           <Link href="/cgv">{t("footer.terms")}</Link>
           <Link href="/confidentialite">{t("footer.privacy")}</Link>
           <Link href="/mentions-legales">{t("footer.legalNotice")}</Link>

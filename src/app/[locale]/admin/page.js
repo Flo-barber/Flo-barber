@@ -1,6 +1,8 @@
 import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/atoms/LogoutButton";
+import PageToggle from "@/components/molecules/PageToggle";
+import { getPageFlags } from "@/lib/pageSettings";
 import { getT } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +34,8 @@ export default async function AdminPage({ params, searchParams }) {
     .order("points", { ascending: false });
   if (q) query = query.ilike("full_name", `%${q}%`);
   const { data: clients, count: filteredCount } = await query.range(from, to);
+
+  const pageFlags = await getPageFlags();
 
   const list = clients || [];
   const totalPages = Math.max(1, Math.ceil((filteredCount || 0) / PAGE_SIZE));
@@ -79,6 +83,21 @@ export default async function AdminPage({ params, searchParams }) {
             <span className="admin-stat-value gold-text">{totalPoints}</span>
             <span className="admin-stat-label">{t("admin.statPoints")}</span>
           </div>
+        </div>
+
+        {/* Pages du site : affichage du catalogue / de la boutique (+ leurs CTA) */}
+        <h2 className="admin-section-title">{t("admin.pagesTitle")}</h2>
+        <div className="admin-stats">
+          <PageToggle
+            slug="catalogue"
+            label={t("nav.catalogue")}
+            enabled={pageFlags.catalogue}
+          />
+          <PageToggle
+            slug="boutique"
+            label={t("nav.shop")}
+            enabled={pageFlags.boutique}
+          />
         </div>
 
         {/* Recherche par nom (formulaire GET → conserve le préfixe de locale) */}

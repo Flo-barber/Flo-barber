@@ -1,6 +1,8 @@
 "use server";
 
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { TOGGLABLE_PAGES, PAGE_SETTINGS_TAG } from "@/lib/pageSettings";
 import { updatePoints } from "@/lib/googleWallet";
 import { POINT_MIN_REDEEM, pointsToCents } from "@/lib/format";
 
@@ -107,4 +109,35 @@ export async function redeemPointsAdmin(clientId, pointsToUse) {
   }
 
   return { ok: true, points, cents: pointsToCents(points) };
+}
+
+// Active / désactive une page optionnelle du site (catalogue, boutique).
+// RÉSERVÉ aux administrateurs (vérif ici + policy RLS `page_settings_write`).
+export async function setPageEnabled(slug, enabled) {
+  if (!TOGGLABLE_PAGES.includes(slug)) return { error: "Page inconnue." };
+
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Vous devez être connecté." };
+
+  const { data: admin } = await supabase
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!admin) return { error: "Action réservée au salon." };
+
+  const { error } = await supabase
+    .from("page_settings")
+    .upsert({ slug, enabled: !!enabled, updated_at: new Date().toISOString() });
+  if (error) return { error: error.message };
+
+  // Purge le cache des réglages + toutes les pages (nav, CTA, sitemap…).
+  revalidateTag(PAGE_SETTINGS_TAG);
+  revalidatePath("/", "layout");
+
+  return { ok: true, enabled: !!enabled };
 }

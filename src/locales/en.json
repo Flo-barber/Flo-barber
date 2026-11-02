@@ -156,7 +156,12 @@
     "manageClient": "Manage this client's points",
     "prev": "Previous",
     "next": "Next",
-    "pageOf": "Page {page} / {total}"
+    "pageOf": "Page {page} / {total}",
+    "pagesTitle": "Site pages",
+    "pageOn": "Visible on the site",
+    "pageOff": "Hidden (links and CTAs removed)",
+    "pageShown": "“{page}” page shown.",
+    "pageHidden": "“{page}” page hidden."
   },
   "adminProducts": {
     "title": "Product management",

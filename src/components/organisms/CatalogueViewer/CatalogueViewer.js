@@ -441,6 +441,8 @@ export default function CatalogueViewer({ cuts = [], products = {} }) {
           </div>
         )}
 
+        {/* Masqué si aucun produit (ex. boutique désactivée depuis l'admin). */}
+        {cut.products.some((slug) => productsBySlug[slug]) && (
         <div className="cv-products">
           <h3 className="cv-products-title">{t("cataloguePage.productsUsed")}</h3>
           <ul className="cv-products-list">
@@ -465,6 +467,7 @@ export default function CatalogueViewer({ cuts = [], products = {} }) {
             })}
           </ul>
         </div>
+        )}
       </div>
     </div>
   );

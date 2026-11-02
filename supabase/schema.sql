@@ -458,3 +458,30 @@ insert into public.barbers (slug, name, role_fr, role_en, bio_fr, bio_en, image,
    'The straight-razor and hot-towel ritual, for the closest shave.',
    '/catalogue/buzz-cut-1.jpg', 4)
 on conflict (slug) do nothing;
+
+-- =============================================================
+--  PAGES DU SITE — affichage activable par l'admin (switch)
+-- -------------------------------------------------------------
+--  Une ligne par page optionnelle (`catalogue`, `boutique`). Page désactivée
+--  → 404 + liens/CTA masqués. Lecture publique, écriture admin. Bloc idempotent.
+-- =============================================================
+create table if not exists public.page_settings (
+  slug text primary key,
+  enabled boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.page_settings enable row level security;
+
+drop policy if exists page_settings_select on public.page_settings;
+create policy page_settings_select on public.page_settings
+  for select using (true);
+
+drop policy if exists page_settings_write on public.page_settings;
+create policy page_settings_write on public.page_settings
+  for all using (public.is_admin()) with check (public.is_admin());
+
+insert into public.page_settings (slug, enabled) values
+  ('catalogue', true),
+  ('boutique', true)
+on conflict (slug) do nothing;

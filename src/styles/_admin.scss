@@ -386,6 +386,16 @@
   }
 }
 
+// Titre de sous-section (ex. « Pages du site »)
+.admin-section-title {
+  font-family: $font-condensed;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: $text-muted;
+  margin-bottom: 14px;
+}
+
 // Recherche client
 .admin-search {
   display: flex;

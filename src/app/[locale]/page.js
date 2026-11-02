@@ -1,8 +1,7 @@
 import Link from "@/i18n/Link";
 import salons from "@/data/salons";
-import BarbersTimeline from "@/components/organisms/BarbersTimeline";
-import { getBarbers } from "@/lib/barbers";
 import { getT } from "@/i18n/dictionaries";
+import { getPageFlags } from "@/lib/pageSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +19,8 @@ export default async function HomePage({ params }) {
   const { locale } = await params;
   const t = getT(locale);
   const services = t("home.services");
+  const pages = await getPageFlags();
   const salonWord = salons.length > 1 ? t("common.salons") : t("common.salon");
-  const barbers = await getBarbers();
 
   return (
     <>
@@ -40,9 +39,11 @@ export default async function HomePage({ params }) {
             <Link href="/recherche" className="btn btn-primary">
               {t("home.ctaFind")}
             </Link>
-            <Link href="/catalogue" className="btn btn-outline">
-              {t("home.ctaCatalogue")}
-            </Link>
+            {pages.catalogue && (
+              <Link href="/catalogue" className="btn btn-outline">
+                {t("home.ctaCatalogue")}
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -66,9 +67,6 @@ export default async function HomePage({ params }) {
           </div>
         </div>
       </section>
-
-      {/* ÉQUIPE — timeline animée au scroll (barbiers depuis la base) */}
-      <BarbersTimeline barbers={barbers} />
 
       {/* LOCATIONS TEASER */}
       <section className="section section-alt">

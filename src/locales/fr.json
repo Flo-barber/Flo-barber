@@ -156,7 +156,12 @@
     "manageClient": "Gérer les points de ce client",
     "prev": "Précédent",
     "next": "Suivant",
-    "pageOf": "Page {page} / {total}"
+    "pageOf": "Page {page} / {total}",
+    "pagesTitle": "Pages du site",
+    "pageOn": "Visible sur le site",
+    "pageOff": "Masquée (liens et CTA cachés)",
+    "pageShown": "Page « {page} » affichée.",
+    "pageHidden": "Page « {page} » masquée."
   },
   "adminProducts": {
     "title": "Gestion des produits",

@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePoints } from "@/lib/googleWallet";
 import { buildLineItems } from "@/lib/products";
 import {
+import { getPageFlags } from "@/lib/pageSettings";
   SHIPPING_CENTS,
   POINT_MIN_REDEEM,
   pointsToCents,
@@ -32,6 +33,8 @@ async function syncWallet(supabase, userId) {
 // `pointsToUse` : nombre de Flo Points que le client souhaite utiliser (remise).
 export async function createCheckoutSession(items, locale = "fr", pointsToUse = 0) {
   if (!stripe) return { error: "not_configured" };
+  // Boutique désactivée depuis l'admin → plus aucun paiement possible.
+  if (!(await getPageFlags()).boutique) return { error: "disabled" };
 
   const { line, totalCents, stockErrors } = await buildLineItems(items);
   if (stockErrors.length) return { error: "stock" };

@@ -9,6 +9,7 @@ import { I18nProvider } from "@/i18n/I18nProvider";
 import { CartProvider } from "@/cart/CartProvider";
 import { getDictionary, getT } from "@/i18n/dictionaries";
 import { locales } from "@/i18n/config";
+import { getPageFlags } from "@/lib/pageSettings";
 
 // DA « béton / métal » : gothique moderne LISIBLE (Grenze Gotisch) en graisse légère
 // pour la marque et les grands titres ; condensée (Oswald) pour sur-titres / boutons.
@@ -87,6 +88,7 @@ export const viewport = {
 export default async function RootLayout({ children, params }) {
   const { locale } = await params;
   const dict = getDictionary(locale);
+  const pages = await getPageFlags();
 
   return (
     <html lang={locale} className={`${gothic.variable} ${condensed.variable}`}>
@@ -94,9 +96,9 @@ export default async function RootLayout({ children, params }) {
         <I18nProvider locale={locale} dict={dict}>
           <CartProvider>
             <LanguageSwitcher />
-            <Navbar />
+            <Navbar pages={pages} />
             <main>{children}</main>
-            <Footer />
+            <Footer pages={pages} />
             <CookieNotice />
             <ServiceWorker />
           </CartProvider>

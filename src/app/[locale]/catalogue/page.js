@@ -2,6 +2,7 @@ import { getT } from "@/i18n/dictionaries";
 import CatalogueViewer from "@/components/organisms/CatalogueViewer";
 import { getCuts } from "@/lib/cuts";
 import { getProductsBySlugs } from "@/lib/products";
+import { getPageFlags } from "@/lib/pageSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +21,10 @@ export default async function CataloguePage({ params }) {
   const t = getT(locale);
 
   // Coupes + produits « utilisés » → chargés depuis la base pour le viewer.
+  // Boutique désactivée → pas de produits liés (ils pointent vers /boutique).
   const cuts = await getCuts();
-  const slugs = [...new Set(cuts.flatMap((c) => c.products || []))];
+  const { boutique } = await getPageFlags();
+  const slugs = boutique ? [...new Set(cuts.flatMap((c) => c.products || []))] : [];
   const products = await getProductsBySlugs(slugs);
 
   return (
