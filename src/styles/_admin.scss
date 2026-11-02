@@ -6,6 +6,16 @@
 .admin,
 .scanner {
   padding: 48px 0 80px;
+
+  // Pas de dégradé « background-clip: text » dans l'admin : sur iPad (WebKit)
+  // il n'est pas repeint quand la valeur change (ex. remise du scanner) → texte
+  // transparent, donc « noir ». Couleur métal unie à la place.
+  .gold-text,
+  .metal-text {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: $metal-light;
+  }
 }
 
 // --- Admin produits ---
