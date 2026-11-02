@@ -5,8 +5,9 @@ import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import Link from "@/i18n/Link";
 import ArrowLeft from "@/components/atoms/ArrowLeft";
+import VipBadge from "@/components/atoms/VipBadge";
 import { createClient } from "@/lib/supabase/client";
-import { creditPoints, redeemPointsAdmin } from "@/lib/adminActions";
+import { creditPoints, redeemPointsAdmin, setVip } from "@/lib/adminActions";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { formatEuro, pointsToCents, POINT_MIN_REDEEM } from "@/lib/format";
 
@@ -21,6 +22,7 @@ export default function ScannerPage() {
   const [msg, setMsg] = useState(null);
   const [err, setErr] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [vipBusy, setVipBusy] = useState(false);
 
   const QrScanner = useMemo(
     () =>
@@ -39,7 +41,7 @@ export default function ScannerPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, email, points")
+        .select("id, full_name, email, points, vip")
         .eq("id", id)
         .maybeSingle();
       if (error || !data) {
@@ -103,6 +105,18 @@ export default function ScannerPage() {
     setRedeemPts("");
   }
 
+  async function toggleVip() {
+    setVipBusy(true);
+    setErr(null);
+    const res = await setVip(client.id, !client.vip);
+    setVipBusy(false);
+    if (res?.error) {
+      setErr(res.error);
+      return;
+    }
+    setClient((c) => ({ ...c, vip: res.vip }));
+  }
+
   function reset() {
     setClient(null);
     setScanning(true);
@@ -147,11 +161,22 @@ export default function ScannerPage() {
           <div className="scanner-panel">
             <div className="scanner-client">
               <span className="scanner-client-label">{t("scanner.clientLabel")}</span>
-              <strong>{client.full_name || client.email || t("scanner.clientFallback")}</strong>
+              <strong className="scanner-client-name">
+                {client.full_name || client.email || t("scanner.clientFallback")}
+                {client.vip && <VipBadge />}
+              </strong>
               <span className="scanner-client-points">
                 {t("scanner.balance")}{" "}
                 <b className="gold-text">{client.points}</b> {t("scanner.pts")}
               </span>
+              <button
+                type="button"
+                className="btn btn-outline scanner-vip-btn"
+                onClick={toggleVip}
+                disabled={vipBusy}
+              >
+                {vipBusy ? "…" : client.vip ? t("scanner.vipRemove") : t("scanner.vipAdd")}
+              </button>
             </div>
 
             {msg ? (

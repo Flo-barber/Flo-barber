@@ -29,6 +29,12 @@
     justify-content: space-between;
   }
 
+  &-card-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   &-card-logo {
     height: 22px;
     width: auto;

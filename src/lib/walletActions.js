@@ -17,7 +17,7 @@ export async function getWalletSaveUrl() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, points")
+    .select("full_name, points, vip")
     .eq("id", user.id)
     .single();
 
@@ -26,6 +26,7 @@ export async function getWalletSaveUrl() {
       clientId: user.id,
       name: profile?.full_name,
       points: profile?.points || 0,
+      vip: !!profile?.vip,
     });
     return { url };
   } catch (e) {

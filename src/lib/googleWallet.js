@@ -106,7 +106,12 @@ export async function ensureClass() {
   classEnsured = true;
 }
 
-function buildObject({ clientId, name, points }) {
+// Module texte « Statut : VIP » affiché sur la carte (vide si non VIP).
+function statusModules(vip) {
+  return vip ? [{ id: "status", header: "Statut", body: "VIP" }] : [];
+}
+
+function buildObject({ clientId, name, points, vip }) {
   return {
     id: objectId(clientId),
     classId: classId(),
@@ -117,6 +122,7 @@ function buildObject({ clientId, name, points }) {
       label: "Points",
       balance: { int: Number(points) || 0 },
     },
+    textModulesData: statusModules(vip),
     barcode: {
       type: "QR_CODE",
       value: clientId,
@@ -126,7 +132,7 @@ function buildObject({ clientId, name, points }) {
 }
 
 // Génère l'URL « Ajouter à Google Wallet » (JWT signé).
-export async function getSaveUrl({ clientId, name, points }) {
+export async function getSaveUrl({ clientId, name, points, vip }) {
   await ensureClass();
   const sa = serviceAccount();
   const claims = {
@@ -135,7 +141,7 @@ export async function getSaveUrl({ clientId, name, points }) {
     typ: "savetowallet",
     iat: Math.floor(Date.now() / 1000),
     payload: {
-      loyaltyObjects: [buildObject({ clientId, name, points })],
+      loyaltyObjects: [buildObject({ clientId, name, points, vip })],
     },
   };
   const token = jwt.sign(claims, sa.private_key, { algorithm: "RS256" });
@@ -152,6 +158,21 @@ export async function updatePoints(clientId, points) {
       url: `${BASE}/loyaltyObject/${objectId(clientId)}`,
       method: "PATCH",
       data: { loyaltyPoints: { label: "Points", balance: { int: Number(points) || 0 } } },
+    });
+  } catch (e) {
+    if (e?.response?.status !== 404) throw e;
+  }
+}
+
+// Met à jour le statut VIP sur la carte déjà ajoutée au wallet (404 ignoré).
+export async function updateVip(clientId, vip) {
+  if (!isConfigured()) return;
+  const client = await authClient();
+  try {
+    await client.request({
+      url: `${BASE}/loyaltyObject/${objectId(clientId)}`,
+      method: "PATCH",
+      data: { textModulesData: statusModules(vip) },
     });
   } catch (e) {
     if (e?.response?.status !== 404) throw e;

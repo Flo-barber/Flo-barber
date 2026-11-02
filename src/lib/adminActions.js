@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { TOGGLABLE_PAGES, PAGE_SETTINGS_TAG } from "@/lib/pageSettings";
-import { updatePoints } from "@/lib/googleWallet";
+import { updatePoints, updateVip } from "@/lib/googleWallet";
 import { POINT_MIN_REDEEM, pointsToCents } from "@/lib/format";
 
 // Crédite des points à un client. RÉSERVÉ aux administrateurs (salon).
@@ -140,4 +140,38 @@ export async function setPageEnabled(slug, enabled) {
   revalidatePath("/", "layout");
 
   return { ok: true, enabled: !!enabled };
+}
+
+// Passe un client en VIP (ou retire le statut). RÉSERVÉ aux administrateurs :
+// vérif ici + fonction SECURITY DEFINER `set_vip` qui revérifie is_admin().
+export async function setVip(clientId, vip) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Vous devez être connecté." };
+
+  const { data: admin } = await supabase
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!admin) return { error: "Action réservée au salon." };
+
+  const { data, error } = await supabase.rpc("set_vip", {
+    p_client: clientId,
+    p_vip: !!vip,
+  });
+  if (error) return { error: error.message };
+
+  // Synchronise le statut sur la carte Google Wallet du client (best-effort).
+  try {
+    await updateVip(clientId, !!data);
+  } catch {
+    // Ne bloque jamais le changement de statut si le wallet n'est pas configuré.
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true, vip: !!data };
 }

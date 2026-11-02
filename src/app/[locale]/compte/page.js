@@ -42,7 +42,7 @@ export default async function ComptePage({ params }) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, phone, email, points")
+    .select("full_name, phone, email, points, vip")
     .eq("id", user.id)
     .single();
 
@@ -225,6 +225,7 @@ export default async function ComptePage({ params }) {
               clientId={user.id}
               name={profile?.full_name}
               points={points}
+              vip={!!profile?.vip}
               walletEnabled={walletConfigured()}
             />
           </aside>

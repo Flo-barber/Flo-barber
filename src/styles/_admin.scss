@@ -565,10 +565,26 @@
     font-size: 1.3rem;
   }
 
+  &-name {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
   &-points {
     color: $text-muted;
     font-size: 0.9rem;
   }
+}
+
+.scanner-vip-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.admin-vip {
+  margin-left: 8px;
 }
 
 .scanner-form {

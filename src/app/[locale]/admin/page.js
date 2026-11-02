@@ -2,6 +2,7 @@ import Link from "@/i18n/Link";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/atoms/LogoutButton";
 import PageToggle from "@/components/molecules/PageToggle";
+import VipBadge from "@/components/atoms/VipBadge";
 import { getPageFlags } from "@/lib/pageSettings";
 import { getT } from "@/i18n/dictionaries";
 
@@ -30,7 +31,7 @@ export default async function AdminPage({ params, searchParams }) {
   // Liste paginée + recherche par nom (ilike = valeur paramétrée, sûre).
   let query = supabase
     .from("profiles")
-    .select("id, full_name, email, phone, points", { count: "exact" })
+    .select("id, full_name, email, phone, points, vip", { count: "exact" })
     .order("points", { ascending: false });
   if (q) query = query.ilike("full_name", `%${q}%`);
   const { data: clients, count: filteredCount } = await query.range(from, to);
@@ -147,6 +148,7 @@ export default async function AdminPage({ params, searchParams }) {
                       >
                         {c.full_name || "—"}
                       </Link>
+                      {c.vip && <VipBadge className="admin-vip" />}
                     </td>
                     <td>{c.email || "—"}</td>
                     <td>{c.phone || "—"}</td>

@@ -262,7 +262,9 @@
     "redeemPreview": "Valeur de la remise :",
     "redeem": "Utiliser les points",
     "redeemed": "−{points} point(s) utilisé(s) ({value}) pour {name}.",
-    "pts": "pts"
+    "pts": "pts",
+    "vipAdd": "Passer en VIP",
+    "vipRemove": "Retirer le statut VIP"
   },
   "loyalty": {
     "title": "Carte de fidélité",

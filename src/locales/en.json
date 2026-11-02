@@ -262,7 +262,9 @@
     "redeemPreview": "Discount value:",
     "redeem": "Redeem points",
     "redeemed": "−{points} point(s) redeemed ({value}) for {name}.",
-    "pts": "pts"
+    "pts": "pts",
+    "vipAdd": "Make VIP",
+    "vipRemove": "Remove VIP status"
   },
   "loyalty": {
     "title": "Loyalty card",

@@ -3,11 +3,12 @@
 import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import AddToGoogleWallet from "@/components/molecules/AddToGoogleWallet";
+import VipBadge from "@/components/atoms/VipBadge";
 import { useT } from "@/i18n/I18nProvider";
 import "./LoyaltyCard.scss";
 
 // Carte de fidélité : QR encodant l'identifiant du client, téléchargeable en PNG.
-export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
+export default function LoyaltyCard({ clientId, name, points, vip, walletEnabled }) {
   const t = useT();
   const wrapRef = useRef(null);
 
@@ -42,7 +43,10 @@ export default function LoyaltyCard({ clientId, name, points, walletEnabled }) {
         </div>
 
         <div className="loyalty-card-foot">
-          <strong>{name || t("loyalty.client")}</strong>
+          <strong className="loyalty-card-name">
+            {name || t("loyalty.client")}
+            {vip && <VipBadge />}
+          </strong>
           <span>
             <b className="gold-text">{points}</b>{" "}
             {points > 1 ? t("loyalty.pointsWord") : t("loyalty.pointWord")}

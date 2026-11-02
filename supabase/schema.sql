@@ -485,3 +485,32 @@ insert into public.page_settings (slug, enabled) values
   ('catalogue', true),
   ('boutique', true)
 on conflict (slug) do nothing;
+
+-- =============================================================
+--  STATUT VIP CLIENT — attribué UNIQUEMENT par un admin
+-- -------------------------------------------------------------
+--  `vip` n'est pas dans le `grant update (full_name, phone)` : un client ne peut
+--  donc pas se déclarer VIP. Modification via la fonction SECURITY DEFINER
+--  `set_vip`, qui vérifie is_admin(). Bloc idempotent.
+-- =============================================================
+alter table public.profiles add column if not exists vip boolean not null default false;
+
+create or replace function public.set_vip(p_client uuid, p_vip boolean)
+returns boolean
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Action réservée au salon.';
+  end if;
+  update public.profiles set vip = coalesce(p_vip, false) where id = p_client;
+  if not found then
+    raise exception 'Client introuvable.';
+  end if;
+  return coalesce(p_vip, false);
+end;
+$$;
+
+revoke execute on function public.set_vip(uuid, boolean) from public, anon;
+grant execute on function public.set_vip(uuid, boolean) to authenticated;

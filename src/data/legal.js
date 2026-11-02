@@ -11,15 +11,18 @@
 // ⚠️ Ce sont les informations de l'ENTREPRISE FLO BARBER (l'exploitant des salons),
 // qui est le RESPONSABLE DU TRAITEMENT et l'éditeur du site — pas celles du
 // développeur/agence (qui est, au plus, sous-traitant au sens de l'art. 28 RGPD).
+// Source : registre national des entreprises (SIREN 911 811 057, données INSEE/RNE).
+// À vérifier sur le Kbis : capital (non publié par l'API), greffe RCS, n° de TVA
+// (calculé depuis le SIREN).
 export const COMPANY = {
-  name: "[NOM DE LA SOCIÉTÉ]",
-  legalForm: "[FORME JURIDIQUE — ex. SARL]",
+  name: "FLO BARBER",
+  legalForm: "SARL",
   capital: "[CAPITAL SOCIAL]",
-  address: "[ADRESSE DU SIÈGE SOCIAL]",
-  siret: "[SIRET]",
-  rcs: "[VILLE + N° RCS]",
-  vat: "[N° TVA INTRACOMMUNAUTAIRE]",
-  director: "[NOM DU DIRECTEUR DE LA PUBLICATION]",
+  address: "2 Rue des Anciennes Carrières, 34440 Colombiers",
+  siret: "911 811 057 00023",
+  rcs: "RCS Béziers 911 811 057",
+  vat: "FR09911811057",
+  director: "Florian Lallement, gérant",
   email: "[EMAIL DE CONTACT]",
   phone: "[TÉLÉPHONE]",
 };
@@ -28,7 +31,7 @@ export const legal = {
   privacy: {
     fr: {
       title: "Politique de confidentialité",
-      updated: "Dernière mise à jour : [JJ/MM/AAAA]",
+      updated: "Dernière mise à jour : 02/11/2026",
       blocks: [
         `Chez Flo Barber, nous accordons une grande importance à la protection de vos données personnelles. La présente politique explique quelles données nous collectons, pourquoi, et quels sont vos droits, conformément au Règlement général sur la protection des données (RGPD) et à la loi Informatique et Libertés.`,
         { h: "1. Responsable du traitement" },
@@ -57,17 +60,18 @@ export const legal = {
             "Supabase — hébergement de la base de données et de l'authentification.",
             "Google (Google Wallet) — uniquement si vous ajoutez votre carte de fidélité à Google Wallet (nom, identifiant et solde de points).",
             "OpenStreetMap / Nominatim — géocodage de votre recherche de salon.",
+            "Stripe — paiement des commandes de la boutique en ligne (vos coordonnées bancaires sont saisies chez Stripe et ne nous sont jamais transmises).",
             "Planity — réservation en ligne (vous êtes redirigé vers leur site).",
             "Vercel — hébergement du site web.",
           ],
         },
         { h: "5. Transferts hors Union européenne" },
-        `Certains prestataires (Google, Vercel) peuvent traiter des données aux États-Unis. Ces transferts sont encadrés par des garanties appropriées (clauses contractuelles types de la Commission européenne et/ou EU-US Data Privacy Framework).`,
+        `Certains prestataires (Google, Stripe, Vercel) peuvent traiter des données aux États-Unis. Ces transferts sont encadrés par des garanties appropriées (clauses contractuelles types de la Commission européenne et/ou EU-US Data Privacy Framework).`,
         { h: "6. Durée de conservation" },
         {
           ul: [
             "Données de compte : conservées tant que votre compte est actif, puis supprimées sur votre demande ou après [X] d'inactivité.",
-            "Données de transactions : conservées [X ans] pour répondre à nos obligations comptables.",
+            "Données de transactions et de commandes : conservées 10 ans pour répondre à nos obligations comptables (art. L123-22 du Code de commerce).",
           ],
         },
         { h: "7. Cookies" },
@@ -89,7 +93,7 @@ export const legal = {
     },
     en: {
       title: "Privacy Policy",
-      updated: "Last updated: [DD/MM/YYYY]",
+      updated: "Last updated: 02/11/2026",
       blocks: [
         `At Flo Barber, we take the protection of your personal data seriously. This policy explains what data we collect, why, and what your rights are, in accordance with the General Data Protection Regulation (GDPR).`,
         { h: "1. Data controller" },
@@ -118,17 +122,18 @@ export const legal = {
             "Supabase — database hosting and authentication.",
             "Google (Google Wallet) — only if you add your loyalty card to Google Wallet (name, identifier and points balance).",
             "OpenStreetMap / Nominatim — geocoding of your salon search.",
+            "Stripe — payment for online shop orders (your card details are entered on Stripe and never passed to us).",
             "Planity — online booking (you are redirected to their site).",
             "Vercel — website hosting.",
           ],
         },
         { h: "5. Transfers outside the European Union" },
-        `Some providers (Google, Vercel) may process data in the United States. These transfers are covered by appropriate safeguards (European Commission standard contractual clauses and/or the EU-US Data Privacy Framework).`,
+        `Some providers (Google, Stripe, Vercel) may process data in the United States. These transfers are covered by appropriate safeguards (European Commission standard contractual clauses and/or the EU-US Data Privacy Framework).`,
         { h: "6. Retention period" },
         {
           ul: [
             "Account data: kept as long as your account is active, then deleted on your request or after [X] of inactivity.",
-            "Transaction data: kept for [X years] to meet our accounting obligations.",
+            "Transaction and order data: kept for 10 years to meet our accounting obligations (art. L123-22 of the French Commercial Code).",
           ],
         },
         { h: "7. Cookies" },
@@ -153,7 +158,7 @@ export const legal = {
   mentions: {
     fr: {
       title: "Mentions légales",
-      updated: "Dernière mise à jour : [JJ/MM/AAAA]",
+      updated: "Dernière mise à jour : 02/11/2026",
       blocks: [
         { h: "Éditeur du site" },
         `${COMPANY.name}, ${COMPANY.legalForm} au capital de ${COMPANY.capital}, dont le siège social est situé ${COMPANY.address}. SIRET : ${COMPANY.siret} — RCS : ${COMPANY.rcs} — TVA intracommunautaire : ${COMPANY.vat}. Directeur de la publication : ${COMPANY.director}. Contact : ${COMPANY.email} — ${COMPANY.phone}.`,
@@ -169,7 +174,7 @@ export const legal = {
     },
     en: {
       title: "Legal notice",
-      updated: "Last updated: [DD/MM/YYYY]",
+      updated: "Last updated: 02/11/2026",
       blocks: [
         { h: "Publisher" },
         `${COMPANY.name}, ${COMPANY.legalForm} with a share capital of ${COMPANY.capital}, registered office at ${COMPANY.address}. Business ID: ${COMPANY.siret} — Trade register: ${COMPANY.rcs} — VAT: ${COMPANY.vat}. Publication director: ${COMPANY.director}. Contact: ${COMPANY.email} — ${COMPANY.phone}.`,
@@ -188,7 +193,7 @@ export const legal = {
   terms: {
     fr: {
       title: "Conditions générales de vente et d'utilisation",
-      updated: "Dernière mise à jour : [JJ/MM/AAAA]",
+      updated: "Dernière mise à jour : 02/11/2026",
       blocks: [
         { h: "1. Objet" },
         `Les présentes conditions régissent l'utilisation du site Flo Barber, la vente en ligne de produits de coiffure et de soin, le programme de fidélité, ainsi que la localisation des salons. En créant un compte ou en passant commande, vous les acceptez sans réserve. L'éditeur est identifié dans les mentions légales.`,
@@ -199,7 +204,8 @@ export const legal = {
           ul: [
             "Le cumul de points est réservé aux titulaires d'un compte. Règle : 1 € dépensé = 1 point, en salon (crédité par le salon via le scan de votre carte) comme en ligne.",
             "Les points sont personnels, non cessibles et non convertibles en espèces.",
-            "Les modalités d'utilisation des points (paliers de récompense, valeur, durée de validité) sont précisées ici : [À DÉFINIR].",
+            "Valeur : 1 point = 0,05 €. Les points sont utilisables à partir de 100 points, en tout ou partie, sous forme de remise : en ligne (dans le panier, avant paiement) ou en salon (déduits par le salon).",
+            "Une commande en ligne réglée en partie avec des points doit conserver un montant minimum de 0,50 € payé par carte. Les points utilisés pour une commande dont le paiement n'aboutit pas sont recrédités.",
             "Flo Barber peut faire évoluer le programme ; les points acquis restent utilisables selon les conditions en vigueur à leur acquisition.",
           ],
         },
@@ -210,9 +216,9 @@ export const legal = {
         { h: "6. Commande" },
         `La commande est validée après acceptation des présentes conditions et confirmation du paiement. Un e-mail de confirmation récapitule la commande. Flo Barber peut refuser ou annuler une commande en cas de litige, de rupture de stock ou de soupçon de fraude.`,
         { h: "7. Paiement" },
-        `Le paiement s'effectue par les moyens proposés lors de la commande [MOYENS DE PAIEMENT À PRÉCISER], via un prestataire de paiement sécurisé. La commande est débitée à sa validation.`,
+        `Le paiement s'effectue par carte bancaire, via le prestataire de paiement sécurisé Stripe. La commande est débitée à sa validation.`,
         { h: "8. Livraison" },
-        `Les produits sont livrés à l'adresse indiquée, dans les délais et zones précisés lors de la commande [DÉLAIS / ZONES / FRAIS À PRÉCISER]. Les risques sont transférés au client à la réception.`,
+        `Les produits sont livrés à l'adresse indiquée, en France métropolitaine, Belgique, Luxembourg, Monaco et Suisse. Les frais de livraison sont forfaitaires (4,90 € TTC par commande) et affichés avant paiement. Délai indicatif : [DÉLAI DE LIVRAISON À PRÉCISER]. Aucun retrait en salon n'est proposé. Les risques sont transférés au client à la réception.`,
         { h: "9. Droit de rétractation" },
         `Conformément à l'article L221-18 du Code de la consommation, vous disposez de 14 jours à compter de la réception pour vous rétracter, sans motif. Pour l'exercer, contactez-nous à ${COMPANY.email}. Le remboursement intervient dans les 14 jours. Exception (art. L221-28) : les produits d'hygiène ou cosmétiques descellés après livraison ne peuvent être repris pour des raisons d'hygiène.`,
         { h: "10. Garanties légales" },
@@ -233,7 +239,7 @@ export const legal = {
     },
     en: {
       title: "Terms of sale and use",
-      updated: "Last updated: [DD/MM/YYYY]",
+      updated: "Last updated: 02/11/2026",
       blocks: [
         { h: "1. Purpose" },
         `These terms govern the use of the Flo Barber website, the online sale of hair and grooming products, the loyalty program, and the salon locator. By creating an account or placing an order, you accept them in full. The publisher is identified in the legal notice.`,
@@ -244,7 +250,8 @@ export const legal = {
           ul: [
             "Earning points requires an account. Rule: €1 spent = 1 point, both in salon (credited by the salon by scanning your card) and online.",
             "Points are personal, non-transferable and cannot be exchanged for cash.",
-            "The terms for using points (reward tiers, value, validity period) are set out here: [TO BE DEFINED].",
+            "Value: 1 point = €0.05. Points can be used from 100 points, in full or in part, as a discount: online (in the cart, before payment) or in salon (deducted by the salon).",
+            "An online order partly paid with points must keep a minimum of €0.50 paid by card. Points used for an order whose payment does not go through are credited back.",
             "Flo Barber may update the program; points already earned remain usable under the conditions applicable when they were earned.",
           ],
         },
@@ -255,9 +262,9 @@ export const legal = {
         { h: "6. Orders" },
         `An order is confirmed once these terms are accepted and payment is validated. A confirmation e-mail summarises the order. Flo Barber may refuse or cancel an order in the event of a dispute, out-of-stock or suspected fraud.`,
         { h: "7. Payment" },
-        `Payment is made using the methods offered at checkout [PAYMENT METHODS TO BE SPECIFIED], via a secure payment provider. The order is charged upon validation.`,
+        `Payment is made by bank card, via the secure payment provider Stripe. The order is charged upon validation.`,
         { h: "8. Delivery" },
-        `Products are delivered to the address provided, within the times and areas specified at checkout [TIMES / AREAS / FEES TO BE SPECIFIED]. Risk passes to the customer on receipt.`,
+        `Products are delivered to the address provided, in mainland France, Belgium, Luxembourg, Monaco and Switzerland. Delivery is a flat fee (€4.90 incl. VAT per order), shown before payment. Estimated delivery time: [DELIVERY TIME TO BE SPECIFIED]. In-salon pickup is not available. Risk passes to the customer on receipt.`,
         { h: "9. Right of withdrawal" },
         `Under French consumer law (art. L221-18), you have 14 days from receipt to withdraw, without reason. To exercise it, contact us at ${COMPANY.email}. Refunds are issued within 14 days. Exception (art. L221-28): hygiene or cosmetic products unsealed after delivery cannot be returned for hygiene reasons.`,
         { h: "10. Legal warranties" },
