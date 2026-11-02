@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/i18n/Link";
 import ArrowLeft from "@/components/atoms/ArrowLeft";
+import PasswordInput from "@/components/atoms/PasswordInput";
 import Turnstile, { CAPTCHA_ENABLED } from "@/components/molecules/Turnstile";
 import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/i18n/I18nProvider";
@@ -155,8 +156,7 @@ export default function ConnexionPage() {
           </label>
           <label>
             {t("auth.password")}
-            <input
-              type="password"
+            <PasswordInput
               required
               minLength={6}
               value={form.password}

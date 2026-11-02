@@ -138,6 +138,8 @@
     "phone": "Phone",
     "email": "Email",
     "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "submitLogin": "Sign in",
     "submitSignup": "Create my account",
     "noAccount": "No account yet?",
