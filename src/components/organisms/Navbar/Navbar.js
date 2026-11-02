@@ -39,7 +39,13 @@ export default function Navbar({ pages = {} }) {
       <div className="nav-pill">
         <Link href="/" className="nav-brand" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/wordmark.svg" alt="Flo Barber" className="nav-brand-mark" />
+          <img
+            src="/brand/logo-flo-barber.svg"
+            alt="Flo Barber"
+            className="nav-brand-mark"
+            width="240"
+            height="240"
+          />
         </Link>
 
         <nav className={`nav-links ${open ? "open" : ""}`}>

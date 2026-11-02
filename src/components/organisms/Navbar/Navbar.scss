@@ -50,10 +50,13 @@
     flex-shrink: 0;
   }
 
+  // Médaillon rond : légèrement plus haut que la pilule (60px) pour rester lisible
   &-brand-mark {
-    height: 26px;
-    width: auto;
+    height: 68px;
+    width: 68px;
     display: block;
+    border-radius: 50%;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
   }
 
   &-links {
@@ -200,7 +203,12 @@
 
 @media (max-width: $bp-nav) {
   .nav-pill {
-    padding-left: 20px;
+    padding-left: 10px;
+  }
+
+  .nav-brand-mark {
+    height: 70px;
+    width: 70px;
   }
 
   .nav-burger {
@@ -255,8 +263,15 @@
   }
 }
 
+// Mobile : médaillon agrandi qui déborde de la pilule (haut et bas) pour
+// rester lisible malgré la petite largeur d'écran.
 @media (max-width: $bp-mobile) {
+  .nav-pill {
+    padding-left: 6px;
+  }
+
   .nav-brand-mark {
-    height: 22px;
+    height: 70px;
+    width: 70px;
   }
 }

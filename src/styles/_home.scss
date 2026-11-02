@@ -8,9 +8,7 @@
   min-height: calc(100vh - #{$nav-height});
   display: flex;
   align-items: center;
-  background:
-    radial-gradient(circle at 72% 28%, rgba(200, 202, 210, 0.1), transparent 55%),
-    linear-gradient(180deg, rgba(13, 13, 15, 0) 0%, rgba(13, 13, 15, 0.65) 100%);
+  background: $black url("/brand/hero.jpg") center / cover no-repeat;
   overflow: hidden;
 
   // Halo métallique diffus derrière le titre
@@ -26,14 +24,16 @@
     pointer-events: none;
   }
 
+  // Voile sombre sur la photo : assombrit fortement la colonne de texte (gauche)
+  // et le bas, tout en laissant l'enseigne visible à droite.
   &-overlay {
     position: absolute;
     inset: 0;
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(200, 202, 210, 0.025) 0 2px,
-      transparent 2px 22px
-    );
+    background:
+      linear-gradient(90deg, rgba(13, 13, 15, 0.88) 0%, rgba(13, 13, 15, 0.7) 45%, rgba(13, 13, 15, 0.35) 100%),
+      linear-gradient(180deg, rgba(13, 13, 15, 0.2) 0%, rgba(13, 13, 15, 0.85) 100%);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
     pointer-events: none;
   }
 

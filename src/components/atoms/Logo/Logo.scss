@@ -1,11 +1,12 @@
 // =============================================================
-//  Atom : Logo FB (monogramme SVG)
+//  Atom : Logo FB (monogramme, image médaillon)
 // =============================================================
-// Ce composant n'utilise pas de token du thème (le dégradé est défini
-// inline dans le SVG). Si besoin : `@use "variables" as *;`.
+// Ce composant n'utilise pas de token du thème. Si besoin : `@use "variables" as *;`.
 
 .fb-logo {
-  height: 44px;
-  width: auto;
+  height: 64px;
+  width: 64px;
   display: block;
+  border-radius: 50%; // recadre le médaillon sur son anneau
+  object-fit: cover;
 }
