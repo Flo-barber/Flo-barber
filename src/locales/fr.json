@@ -18,14 +18,32 @@
   },
   "home": {
     "eyebrow": "Barbier · Coiffeur homme · Visagiste",
-    "titleLine1": "L'art du rasage",
-    "titleLine2": "& de la coupe",
+    "titleLine1": "Ta meilleure version",
+    "titleLine2": "commence ici",
     "sub": "Spécialiste en coupes & taille de barbe sur-mesure.",
     "ctaFind": "Trouver un salon",
     "ctaCatalogue": "Voir le catalogue",
     "servicesTitlePre": "Nos ",
     "servicesTitleAccent": "prestations",
     "servicesSub": "Un savoir-faire traditionnel au service de votre style.",
+    "loyaltyTitlePre": "Crée ton compte ",
+    "loyaltyTitleAccent": "fidélité",
+    "loyaltySub": "Gratuit et en 1 minute. Chaque passage au salon te rapporte des points.",
+    "loyaltyPerks": [
+      {
+        "t": "Cumule des points",
+        "d": "1 € dépensé = 1 point, en salon comme sur la future boutique en ligne."
+      },
+      {
+        "t": "Profite de remises",
+        "d": "Dès 100 points, utilise-les en remise : 100 points = 5 €."
+      },
+      {
+        "t": "Ta carte sur ton téléphone",
+        "d": "Un QR code à présenter au salon, à ajouter à Google Wallet."
+      }
+    ],
+    "loyaltyCta": "Créer mon compte",
     "services": [
       {
         "t": "Coupe signature",
@@ -328,7 +346,7 @@
     "book": "Réserver sur Planity"
   },
   "meta": {
-    "homeTitle": "Flo Barber — L'art du rasage & de la coupe",
+    "homeTitle": "Flo Barber — Ta meilleure version commence ici",
     "homeDesc": "Bienvenue chez Flo Barber, barbier, coiffeur homme & visagiste. Trouvez le salon le plus proche et réservez votre rendez-vous en ligne.",
     "catalogueTitle": "Catalogue",
     "catalogueDesc": "Découvrez bientôt le catalogue de produits et prestations Flo Barber.",

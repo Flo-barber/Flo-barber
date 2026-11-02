@@ -168,8 +168,9 @@ export async function setVip(clientId, vip) {
   // Synchronise le statut sur la carte Google Wallet du client (best-effort).
   try {
     await updateVip(clientId, !!data);
-  } catch {
-    // Ne bloque jamais le changement de statut si le wallet n'est pas configuré.
+  } catch (e) {
+    // Ne bloque jamais le changement de statut ; trace dans les logs (Vercel).
+    console.error("[wallet] updateVip:", e?.response?.data?.error || e?.message);
   }
 
   revalidatePath("/", "layout");

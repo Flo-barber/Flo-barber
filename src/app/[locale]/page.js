@@ -5,6 +5,10 @@ import { getPageFlags } from "@/lib/pageSettings";
 
 export const dynamic = "force-dynamic";
 
+// Section « Nos prestations » masquée pour le moment (remplacée par l'appel à
+// créer un compte fidélité). Repasser à true pour la réafficher.
+const SHOW_SERVICES = false;
+
 export async function generateMetadata({ params }) {
   const { locale } = await params;
   const t = getT(locale);
@@ -48,7 +52,8 @@ export default async function HomePage({ params }) {
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* SERVICES (masquée pour le moment) */}
+      {SHOW_SERVICES && (
       <section className="section">
         <div className="container">
           <h2 className="section-title">
@@ -64,6 +69,32 @@ export default async function HomePage({ params }) {
                 <p>{s.d}</p>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* FIDÉLITÉ — incitation à créer un compte */}
+      <section className="section">
+        <div className="container">
+          <h2 className="section-title">
+            {t("home.loyaltyTitlePre")}
+            <span className="gold-text">{t("home.loyaltyTitleAccent")}</span>
+          </h2>
+          <p className="section-subtitle">{t("home.loyaltySub")}</p>
+          <div className="cards">
+            {t("home.loyaltyPerks").map((p) => (
+              <article key={p.t} className="card">
+                <div className="card-icon gold-text">✦</div>
+                <h3>{p.t}</h3>
+                <p>{p.d}</p>
+              </article>
+            ))}
+          </div>
+          <div className="home-loyalty-cta">
+            <Link href="/compte" className="btn btn-primary">
+              {t("home.loyaltyCta")}
+            </Link>
           </div>
         </div>
       </section>

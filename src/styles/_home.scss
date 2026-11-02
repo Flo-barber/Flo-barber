@@ -111,6 +111,13 @@
   }
 }
 
+// Appel à l'action sous la section fidélité
+.home-loyalty-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
 .locations {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;

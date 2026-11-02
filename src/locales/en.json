@@ -18,14 +18,32 @@
   },
   "home": {
     "eyebrow": "Barber · Men's hairstylist · Visagist",
-    "titleLine1": "The art of the shave",
-    "titleLine2": "& the cut",
+    "titleLine1": "Your best self",
+    "titleLine2": "starts here",
     "sub": "Specialists in bespoke cuts & beard trims.",
     "ctaFind": "Find a salon",
     "ctaCatalogue": "View the catalog",
     "servicesTitlePre": "Our ",
     "servicesTitleAccent": "services",
     "servicesSub": "Traditional craftsmanship in service of your style.",
+    "loyaltyTitlePre": "Create your ",
+    "loyaltyTitleAccent": "loyalty account",
+    "loyaltySub": "Free and takes a minute. Every visit to the salon earns you points.",
+    "loyaltyPerks": [
+      {
+        "t": "Earn points",
+        "d": "€1 spent = 1 point, in salon and in our upcoming online shop."
+      },
+      {
+        "t": "Enjoy discounts",
+        "d": "From 100 points, use them as a discount: 100 points = €5."
+      },
+      {
+        "t": "Your card on your phone",
+        "d": "A QR code to show at the salon, ready for Google Wallet."
+      }
+    ],
+    "loyaltyCta": "Create my account",
     "services": [
       {
         "t": "Signature cut",
@@ -328,7 +346,7 @@
     "book": "Book on Planity"
   },
   "meta": {
-    "homeTitle": "Flo Barber — The art of the shave & the cut",
+    "homeTitle": "Flo Barber — Your best self starts here",
     "homeDesc": "Welcome to Flo Barber, barber, men's hairstylist & visagist. Find the nearest salon and book your appointment online.",
     "catalogueTitle": "Catalog",
     "catalogueDesc": "Discover the Flo Barber catalog of products and services soon.",
