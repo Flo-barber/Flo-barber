@@ -1,9 +1,10 @@
 import { locales } from "@/i18n/config";
 import { getPageFlags } from "@/lib/pageSettings";
+import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap() {
   const flags = await getPageFlags();
-  const base = "https://flo-barber.vercel.app";
+  const base = SITE_URL;
   const now = new Date();
   const pages = [
     { path: "", priority: 1 },

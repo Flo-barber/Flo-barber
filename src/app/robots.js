@@ -1,5 +1,7 @@
+import { SITE_URL } from "@/lib/site";
+
 export default function robots() {
-  const base = "https://flo-barber.vercel.app";
+  const base = SITE_URL;
   return {
     rules: {
       userAgent: "*",

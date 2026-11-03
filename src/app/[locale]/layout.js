@@ -10,6 +10,7 @@ import { CartProvider } from "@/cart/CartProvider";
 import { getDictionary, getT } from "@/i18n/dictionaries";
 import { locales } from "@/i18n/config";
 import { getPageFlags } from "@/lib/pageSettings";
+import { SITE_URL } from "@/lib/site";
 
 // DA « béton / métal » : gothique moderne LISIBLE (Grenze Gotisch) en graisse légère
 // pour la marque et les grands titres ; condensée (Oswald) pour sur-titres / boutons.
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }) {
   const { locale } = await params;
   const t = getT(locale);
   return {
-    metadataBase: new URL("https://flo-barber.vercel.app"),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: t("meta.homeTitle"),
       template: "%s | Flo Barber",
