@@ -79,10 +79,12 @@ function MapController({ center, zoom, activeId, markerRefs }) {
 
     // À la fin du déplacement, on ouvre la popup du pin actif ;
     // Leaflet ré-ajuste automatiquement la vue pour que la description soit visible.
+    // ⚠️ Se désabonner AVANT openPopup : son auto-pan peut émettre `moveend`
+    // de façon synchrone → rappel de ce handler → boucle infinie (stack overflow).
     const openActivePopup = () => {
+      map.off("moveend", openActivePopup);
       const marker = activeId && markerRefs.current[activeId];
       if (marker) marker.openPopup();
-      map.off("moveend", openActivePopup);
     };
     map.on("moveend", openActivePopup);
     return () => map.off("moveend", openActivePopup);
