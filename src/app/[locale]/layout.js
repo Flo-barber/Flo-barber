@@ -8,7 +8,8 @@ import CookieNotice from "@/components/molecules/CookieNotice";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { CartProvider } from "@/cart/CartProvider";
 import { getDictionary, getT } from "@/i18n/dictionaries";
-import { locales } from "@/i18n/config";
+import { notFound } from "next/navigation";
+import { locales, isLocale } from "@/i18n/config";
 import { getPageFlags } from "@/lib/pageSettings";
 import { SITE_URL } from "@/lib/site";
 
@@ -39,6 +40,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const t = getT(locale);
   return {
     metadataBase: new URL(SITE_URL),
@@ -72,10 +74,11 @@ export async function generateMetadata({ params }) {
     other: { "mobile-web-app-capable": "yes" },
     icons: {
       icon: [
-        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-        { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+        { url: "/favicon.ico?v=4", sizes: "48x48" },
+        { url: "/icon-192.png?v=4", sizes: "192x192", type: "image/png" },
+        { url: "/icon-512.png?v=4", sizes: "512x512", type: "image/png" },
       ],
-      apple: "/apple-touch-icon.png",
+      apple: "/apple-touch-icon.png?v=4",
     },
   };
 }
@@ -88,6 +91,7 @@ export const viewport = {
 
 export default async function RootLayout({ children, params }) {
   const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const pages = await getPageFlags();
 
